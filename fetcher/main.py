@@ -49,8 +49,8 @@ def aemet_get(path: str, _retry: bool = True):
     try:
         r = requests.get(f"{AEMET_BASE}{path}", params={"api_key": AEMET_API_KEY}, timeout=10)
         if r.status_code == 429 and _retry:
-            print(f"  429 en {path}, esperando 10s...")
-            time.sleep(10)
+            print(f"  429 en {path}, esperando 20s...")
+            time.sleep(20)
             return aemet_get(path, _retry=False)
         r.raise_for_status()
         datos_url = r.json().get("datos")
@@ -202,7 +202,7 @@ def ejecutar() -> dict:
             "cielo": numericos["cielo"] if numericos else "Sin datos",
         })
 
-        time.sleep(1.5)  # Respetar rate limit de AEMET
+        time.sleep(2)  # Respetar rate limit de AEMET
 
     print("Generando resumen con Bedrock...")
     resumen = generar_resumen_bedrock(comunidades_resultado)
