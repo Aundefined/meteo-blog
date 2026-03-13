@@ -45,8 +45,9 @@ const CIELO_EMOJI = {
 
 function getEmoji(cielo) {
   if (!cielo) return '❓';
+  const c = cielo.toLowerCase();
   for (const [key, emoji] of Object.entries(CIELO_EMOJI)) {
-    if (cielo.toLowerCase() === key.toLowerCase()) return emoji;
+    if (c.includes(key.toLowerCase())) return emoji;
   }
   return '🌡️';
 }
