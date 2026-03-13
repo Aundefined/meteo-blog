@@ -20,6 +20,21 @@
       <p id="summary-text" class="text-slate-700 text-base leading-relaxed">Cargando resumen...</p>
     </div>
 
+    <!-- Mapa de España -->
+    <div class="bg-white rounded-2xl shadow p-6 mb-8">
+      <div class="flex gap-4 items-start flex-wrap lg:flex-nowrap">
+        <div id="spain-map" class="w-full lg:w-2/3"></div>
+        <div class="w-full lg:w-1/3 flex flex-col justify-center gap-2">
+          <p class="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Leyenda</p>
+          <div class="flex items-center gap-2 text-sm text-slate-600"><span class="w-4 h-4 rounded inline-block" style="background:#dbeafe"></span> 0–25% lluvia</div>
+          <div class="flex items-center gap-2 text-sm text-slate-600"><span class="w-4 h-4 rounded inline-block" style="background:#93c5fd"></span> 25–50% lluvia</div>
+          <div class="flex items-center gap-2 text-sm text-slate-600"><span class="w-4 h-4 rounded inline-block" style="background:#3b82f6"></span> 50–75% lluvia</div>
+          <div class="flex items-center gap-2 text-sm text-slate-600"><span class="w-4 h-4 rounded inline-block" style="background:#1d4ed8"></span> 75–100% lluvia</div>
+        </div>
+      </div>
+      <div id="map-tooltip" class="hidden mt-3 text-sm text-slate-600 bg-slate-50 rounded-xl px-4 py-2"></div>
+    </div>
+
     <!-- Grid de cards -->
     <div id="cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       <!-- Las cards se generan con JS -->
