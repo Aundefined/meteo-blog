@@ -222,16 +222,16 @@ Una vez configurados los secrets, cualquier push a `main` dispara el despliegue 
 
 ## Estimación de costes
 
-Ejecutar este proyecto en AWS cuesta aproximadamente **$1–3/mes** en pay-as-you-go:
+Ejecutar este proyecto en AWS cuesta aproximadamente **$0.09/mes** en pay-as-you-go (verificado con AWS Pricing Calculator):
 
 | Servicio | Coste |
 |---|---|
-| Lambda | ~$0.01/mes (5 invocaciones/día × ~35s × 256MB) |
-| Bedrock (Nova Micro) | ~$0.05–0.10/mes (5 llamadas/día × ~1K tokens) |
-| S3 | ~$0.01/mes (almacenamiento y peticiones mínimos) |
-| CloudFront | ~$0.01/mes (tráfico mínimo) |
-| ECR | ~$0.10/mes |
-| EventBridge Scheduler | ~$0.01/mes (150 invocaciones/mes) |
+| Lambda | $0.02/mes (150 invocaciones/mes × 35s × 256MB) |
+| Bedrock (Nova Micro) | ~$0.01/mes (150 llamadas × ~1K tokens input + ~150 tokens output, $0.00004/1K input, $0.00016/1K output) |
+| S3 | $0.00/mes (almacenamiento y peticiones mínimos) |
+| CloudFront | $0.01/mes (0.1GB transferencia + 1000 solicitudes HTTPS) |
+| ECR | $0.05/mes (0.5GB de imagen) |
+| EventBridge Scheduler | $0.00/mes (150 invocaciones/mes, dentro del nivel gratuito de 14M) |
 
 ---
 
