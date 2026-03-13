@@ -135,7 +135,7 @@ data "aws_iam_policy_document" "github_actions_policy" {
 
   statement {
     actions   = ["cloudfront:CreateInvalidation"]
-    resources = ["arn:aws:cloudfront::*:distribution/${aws_cloudfront_distribution.frontend.id}"]
+    resources = ["*"]
   }
 
   statement {
