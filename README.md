@@ -8,7 +8,7 @@ Proyecto MLOps en producción que combina datos meteorológicos en tiempo real d
 
 ## Descripción general
 
-Esta aplicación obtiene la previsión del tiempo para las 17 comunidades autónomas de España cada 4 horas, genera un resumen en lenguaje natural usando un Large Language Model, y sirve todo a través de un frontend estático alojado en AWS.
+Esta aplicación obtiene la previsión del tiempo para las 17 comunidades autónomas de España 5 veces al día (0h, 6h, 10h, 14h y 18h hora española), genera un resumen en lenguaje natural usando un Large Language Model, y sirve todo a través de un frontend estático alojado en AWS.
 
 El proyecto demuestra un flujo MLOps completo: ingesta de datos desde una API externa, inferencia con IA, infraestructura como código, automatización CI/CD y despliegue cloud-native, todo sin gestionar ningún servidor.
 
@@ -57,7 +57,7 @@ CloudFront CDN
 | AWS Bedrock | Inferencia LLM gestionada (Amazon Nova Micro) |
 | Amazon S3 | Aloja los ficheros del frontend y los datos meteorológicos |
 | Amazon CloudFront | CDN con HTTPS, sirve toda la aplicación |
-| Amazon EventBridge Scheduler | Dispara la Lambda cada 4 horas |
+| Amazon EventBridge Scheduler | Dispara la Lambda 5 veces al día (0h, 6h, 10h, 14h, 18h hora España) |
 | AWS IAM | Roles de mínimo privilegio para Lambda, Scheduler y CI/CD |
 
 ### DevOps
@@ -74,7 +74,7 @@ CloudFront CDN
 
 ### Pipeline de datos
 
-1. **EventBridge** dispara la Lambda según un cron (`cron(0 5,9,13,17 * * ? *)` — 4 veces al día en hora española)
+1. **EventBridge** dispara la Lambda según un cron (`cron(0 0,6,10,14,18 * * ? *)` — 5 veces al día en hora española: 0h, 6h, 10h, 14h y 18h)
 2. La Lambda llama a la **API de AEMET OpenData** para cada una de las 17 comunidades autónomas:
    - `GET /prediccion/especifica/municipio/diaria/{municipio}` → temperatura máx/mín, probabilidad de lluvia y estado del cielo para la capital de cada comunidad
 3. Los datos estructurados (17 comunidades) se formatean en un prompt y se envían a **AWS Bedrock** (modelo Amazon Nova Micro) para generar un resumen nacional de 3-4 frases en español, destacando anomalías regionales
