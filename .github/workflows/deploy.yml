@@ -13,6 +13,8 @@ env:
   AWS_REGION: eu-west-1
   ECR_REPOSITORY: meteo-blog-fetcher
   LAMBDA_FUNCTION: meteo-blog-fetcher
+  ECR_REPOSITORY_CHATBOT: meteo-blog-chatbot
+  LAMBDA_FUNCTION_CHATBOT: meteo-blog-chatbot
   S3_BUCKET: meteo-blog-frontend-483874865128
   CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
 
@@ -46,6 +48,18 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
+      - name: Build and push chatbot image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build --platform linux/amd64 --provenance=false \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY_CHATBOT:$IMAGE_TAG \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY_CHATBOT:latest \
+            ./chatbot
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_CHATBOT:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_CHATBOT:latest
+
       - name: Update Lambda image
         env:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
@@ -54,6 +68,15 @@ jobs:
           aws lambda update-function-code \
             --function-name ${{ env.LAMBDA_FUNCTION }} \
             --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Update chatbot Lambda image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          aws lambda update-function-code \
+            --function-name ${{ env.LAMBDA_FUNCTION_CHATBOT }} \
+            --image-uri $ECR_REGISTRY/$ECR_REPOSITORY_CHATBOT:$IMAGE_TAG
 
       - name: Sync frontend to S3
         run: |

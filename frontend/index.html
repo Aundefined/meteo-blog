@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>El Tiempo en España</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    .chat-bot-msg p { margin-bottom: 0.5em; }
+    .chat-bot-msg ul { list-style: disc; padding-left: 1.25em; margin-bottom: 0.5em; }
+    .chat-bot-msg ol { list-style: decimal; padding-left: 1.25em; margin-bottom: 0.5em; }
+    .chat-bot-msg strong { font-weight: 600; }
+    .chat-bot-msg code { background: #e2e8f0; border-radius: 4px; padding: 0.1em 0.3em; font-size: 0.85em; }
+    .chat-bot-msg pre { background: #f1f5f9; border-radius: 8px; padding: 0.75em 1em; overflow-x: auto; margin-bottom: 0.5em; }
+    .chat-bot-msg pre code { background: none; padding: 0; }
+  </style>
 </head>
 <body class="bg-slate-100 min-h-screen font-sans">
 
@@ -43,6 +53,32 @@
     <!-- Error -->
     <div id="error-box" class="hidden text-center text-red-500 mt-10">
       No se pudieron cargar los datos meteorológicos.
+    </div>
+
+    <!-- Chatbot -->
+    <div class="bg-white rounded-2xl shadow p-6 mt-8">
+      <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-4">¿Cómo está hecho este proyecto?</p>
+      <div id="chat-messages" class="flex flex-col gap-3 mb-4 max-h-80 overflow-y-auto"></div>
+      <div id="chat-typing" class="hidden mb-3 flex items-center gap-1 text-slate-400 text-sm">
+        <span class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay:0ms"></span>
+        <span class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay:150ms"></span>
+        <span class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay:300ms"></span>
+      </div>
+      <div id="chat-suggestions" class="flex flex-wrap gap-2 mb-3"></div>
+      <div class="flex gap-2">
+        <input
+          id="chat-input"
+          type="text"
+          placeholder="Pregunta sobre la arquitectura, el código, el despliegue..."
+          class="flex-1 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+        />
+        <button
+          id="chat-btn"
+          class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+        >
+          Enviar
+        </button>
+      </div>
     </div>
 
   </div>

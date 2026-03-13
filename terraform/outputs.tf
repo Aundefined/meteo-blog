@@ -22,3 +22,8 @@ output "github_actions_role_arn" {
   description = "ARN del rol para GitHub Actions"
   value       = aws_iam_role.github_actions.arn
 }
+
+output "chatbot_api_url" {
+  description = "URL del API Gateway del chatbot"
+  value       = aws_apigatewayv2_stage.chatbot.invoke_url
+}

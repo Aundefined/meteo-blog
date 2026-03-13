@@ -82,6 +82,39 @@ resource "aws_iam_role_policy" "scheduler" {
   })
 }
 
+# --- Chatbot Lambda role ---
+
+resource "aws_iam_role" "chatbot_lambda" {
+  name               = "${var.project_name}-chatbot-role"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
+}
+
+resource "aws_iam_role_policy" "chatbot_lambda" {
+  name = "${var.project_name}-chatbot-policy"
+  role = aws_iam_role.chatbot_lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
+        Resource = "arn:aws:logs:*:*:*"
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["bedrock:InvokeModel"]
+        Resource = "*"
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["s3:GetObject"]
+        Resource = "${aws_s3_bucket.frontend.arn}/rag/*"
+      },
+    ]
+  })
+}
+
 # --- GitHub Actions OIDC role ---
 
 data "aws_iam_openid_connect_provider" "github" {
@@ -125,7 +158,7 @@ data "aws_iam_policy_document" "github_actions_policy" {
 
   statement {
     actions   = ["lambda:UpdateFunctionCode", "lambda:UpdateFunctionConfiguration", "lambda:GetFunction"]
-    resources = [aws_lambda_function.fetcher.arn]
+    resources = [aws_lambda_function.fetcher.arn, aws_lambda_function.chatbot.arn]
   }
 
   statement {

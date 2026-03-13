@@ -33,6 +33,11 @@ variable "github_repo" {
   default     = "Aundefined/meteo-blog"
 }
 
+variable "chatbot_image_uri" {
+  description = "URI de la imagen Docker del chatbot en ECR"
+  type        = string
+}
+
 variable "fetch_schedule" {
   description = "Expresión cron para EventBridge (hora España)"
   type        = string

@@ -1,5 +1,6 @@
 const WEATHER_URL = './weather.json';
 const MAP_URL = './spain.svg';
+const CHATBOT_URL = 'https://ezqbc96jig.execute-api.eu-west-1.amazonaws.com/';
 
 // Mapeo de nombre de comunidad al ID del SVG
 const SVG_ID_MAP = {
@@ -211,3 +212,85 @@ async function load() {
 }
 
 load();
+
+// ---------------------------------------------------------------------------
+// Chatbot
+// ---------------------------------------------------------------------------
+
+const SUGGESTIONS = [
+  '¿Cómo funciona la Lambda del fetcher?',
+  '¿Qué modelo de IA usa y por qué?',
+  '¿Cómo está desplegada la infraestructura?',
+  '¿Qué es el pipeline de datos?',
+  '¿Por qué no hay API Gateway en el fetcher?',
+];
+
+function addMessage(text, role) {
+  const container = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  if (role === 'user') {
+    div.className = 'self-end bg-blue-500 text-white text-sm rounded-2xl rounded-br-sm px-4 py-2 max-w-prose';
+    div.textContent = text;
+  } else {
+    div.className = 'chat-bot-msg self-start bg-slate-100 text-slate-700 text-sm rounded-2xl rounded-bl-sm px-4 py-2 max-w-prose';
+    div.innerHTML = marked.parse(text);
+  }
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function setTyping(visible) {
+  document.getElementById('chat-typing').classList.toggle('hidden', !visible);
+  const container = document.getElementById('chat-messages');
+  container.scrollTop = container.scrollHeight;
+}
+
+function initChat() {
+  addMessage('Hola 👋 Soy un asistente que puede explicarte cómo está construido este proyecto. Pregúntame sobre la arquitectura, el código, las decisiones de diseño o las tecnologías usadas.', 'bot');
+
+  const suggestionsEl = document.getElementById('chat-suggestions');
+  SUGGESTIONS.forEach(s => {
+    const btn = document.createElement('button');
+    btn.textContent = s;
+    btn.className = 'text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-full transition-colors';
+    btn.addEventListener('click', () => {
+      document.getElementById('chat-input').value = s;
+      sendMessage();
+    });
+    suggestionsEl.appendChild(btn);
+  });
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const btn = document.getElementById('chat-btn');
+  const question = input.value.trim();
+  if (!question) return;
+
+  addMessage(question, 'user');
+  input.value = '';
+  btn.disabled = true;
+  setTyping(true);
+
+  try {
+    const res = await fetch(CHATBOT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pregunta: question }),
+    });
+    const data = await res.json();
+    addMessage(data.respuesta || data.error, 'bot');
+  } catch {
+    addMessage('Error al conectar con el chatbot.', 'bot');
+  } finally {
+    setTyping(false);
+    btn.disabled = false;
+  }
+}
+
+document.getElementById('chat-btn').addEventListener('click', sendMessage);
+document.getElementById('chat-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendMessage();
+});
+
+initChat();
