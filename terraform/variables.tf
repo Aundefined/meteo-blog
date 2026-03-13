@@ -34,7 +34,7 @@ variable "github_repo" {
 }
 
 variable "fetch_schedule" {
-  description = "Expresión cron para EventBridge (UTC)"
+  description = "Expresión cron para EventBridge (hora España)"
   type        = string
-  default     = "cron(0 5,9,13,17 * * ? *)"  # 6h, 10h, 14h, 18h hora España (invierno)
+  default     = "cron(0 0,6,10,14,18 * * ? *)" 
 }
