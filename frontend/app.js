@@ -1,27 +1,29 @@
 const WEATHER_URL = './weather.json';
 
 const CIELO_EMOJI = {
-  'Despejado': '☀️',
-  'Poco nuboso': '🌤️',
-  'Intervalos nubosos': '⛅',
-  'Nubes altas': '🌥️',
-  'Nuboso': '☁️',
-  'Muy nuboso': '☁️',
-  'Cubierto': '☁️',
+  // Específicos con lluvia primero (antes que sus variantes sin lluvia)
+  'Intervalos nubosos con lluvia': '🌦️',
   'Cubierto con lluvia': '🌧️',
   'Nuboso con lluvia': '🌦️',
-  'Intervalos nubosos con lluvia': '🌦️',
   'Chubascos': '🌧️',
   'Tormenta': '⛈️',
   'Nieve': '🌨️',
   'Niebla': '🌫️',
+  // Genéricos después
+  'Despejado': '☀️',
+  'Poco nuboso': '🌤️',
+  'Intervalos nubosos': '⛅',
+  'Nubes altas': '🌥️',
+  'Muy nuboso': '☁️',
+  'Cubierto': '☁️',
+  'Nuboso': '☁️',
   'Sin datos': '❓',
 };
 
 function getEmoji(cielo) {
   if (!cielo) return '❓';
   for (const [key, emoji] of Object.entries(CIELO_EMOJI)) {
-    if (cielo.toLowerCase().includes(key.toLowerCase())) return emoji;
+    if (cielo.toLowerCase() === key.toLowerCase()) return emoji;
   }
   return '🌡️';
 }
