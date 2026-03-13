@@ -82,7 +82,8 @@ jobs:
         run: |
           aws s3 sync ./frontend s3://${{ env.S3_BUCKET }} \
             --delete \
-            --exclude "weather.json"
+            --exclude "weather.json" \
+            --exclude "rag/*"
 
       - name: Invalidate CloudFront cache
         run: |
