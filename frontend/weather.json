@@ -1,0 +1,142 @@
+{
+  "updated_at": "2026-03-13T13:52:47Z",
+  "summary": "Hoy en España predominan los cielos nubosos y cubiertos con probabilidades de lluvia en Asturias, Cantabria, Castilla y León, Galicia, Navarra, La Rioja y País Vasco. Las temperaturas son frescas en general, con máximas que oscilan entre los 16°C en Cataluña y las 24°C en Andalucía y Región de Murcia. Destaca la ausencia de lluvia en la mayor parte del país, salvo en las regiones mencionadas anteriormente.",
+  "comunidades": [
+    {
+      "nombre": "Andalucía",
+      "capital": "Sevilla",
+      "temp_max": 24,
+      "temp_min": 9,
+      "prob_lluvia": 0,
+      "cielo": "Poco nuboso"
+    },
+    {
+      "nombre": "Aragón",
+      "capital": "Zaragoza",
+      "temp_max": 20,
+      "temp_min": 7,
+      "prob_lluvia": 10,
+      "cielo": "Intervalos nubosos"
+    },
+    {
+      "nombre": "Asturias",
+      "capital": "Oviedo",
+      "temp_max": 18,
+      "temp_min": 5,
+      "prob_lluvia": 100,
+      "cielo": "Cubierto con lluvia"
+    },
+    {
+      "nombre": "Islas Baleares",
+      "capital": "Palma",
+      "temp_max": 18,
+      "temp_min": 11,
+      "prob_lluvia": 0,
+      "cielo": "Muy nuboso"
+    },
+    {
+      "nombre": "Canarias",
+      "capital": "Las Palmas de G.C.",
+      "temp_max": 22,
+      "temp_min": 16,
+      "prob_lluvia": 0,
+      "cielo": "Nuboso"
+    },
+    {
+      "nombre": "Cantabria",
+      "capital": "Santander",
+      "temp_max": 18,
+      "temp_min": 9,
+      "prob_lluvia": 100,
+      "cielo": "Cubierto con lluvia"
+    },
+    {
+      "nombre": "Castilla y León",
+      "capital": "Valladolid",
+      "temp_max": 16,
+      "temp_min": 3,
+      "prob_lluvia": 15,
+      "cielo": "Intervalos nubosos"
+    },
+    {
+      "nombre": "Castilla-La Mancha",
+      "capital": "Toledo",
+      "temp_max": 20,
+      "temp_min": 7,
+      "prob_lluvia": 0,
+      "cielo": "Poco nuboso"
+    },
+    {
+      "nombre": "Cataluña",
+      "capital": "Barcelona",
+      "temp_max": 16,
+      "temp_min": 12,
+      "prob_lluvia": 0,
+      "cielo": "Nubes altas"
+    },
+    {
+      "nombre": "Extremadura",
+      "capital": "Mérida",
+      "temp_max": 21,
+      "temp_min": 4,
+      "prob_lluvia": 0,
+      "cielo": "Despejado"
+    },
+    {
+      "nombre": "Galicia",
+      "capital": "Santiago de Compostela",
+      "temp_max": 13,
+      "temp_min": 9,
+      "prob_lluvia": 100,
+      "cielo": "Cubierto con lluvia"
+    },
+    {
+      "nombre": "Comunidad de Madrid",
+      "capital": "Madrid",
+      "temp_max": 18,
+      "temp_min": 5,
+      "prob_lluvia": 0,
+      "cielo": "Poco nuboso"
+    },
+    {
+      "nombre": "Región de Murcia",
+      "capital": "Murcia",
+      "temp_max": 24,
+      "temp_min": 9,
+      "prob_lluvia": 0,
+      "cielo": "Despejado"
+    },
+    {
+      "nombre": "Navarra",
+      "capital": "Pamplona",
+      "temp_max": 18,
+      "temp_min": 4,
+      "prob_lluvia": 100,
+      "cielo": "Nuboso con lluvia"
+    },
+    {
+      "nombre": "La Rioja",
+      "capital": "Logroño",
+      "temp_max": 20,
+      "temp_min": 6,
+      "prob_lluvia": 100,
+      "cielo": "Intervalos nubosos con lluvia"
+    },
+    {
+      "nombre": "País Vasco",
+      "capital": "Vitoria-Gasteiz",
+      "temp_max": 18,
+      "temp_min": 4,
+      "prob_lluvia": 100,
+      "cielo": "Nuboso con lluvia"
+    },
+    {
+      "nombre": "Comunitat Valenciana",
+      "capital": "Valencia",
+      "temp_max": 19,
+      "temp_min": 10,
+      "prob_lluvia": 0,
+      "cielo": "Despejado"
+    }
+  ]
+}
