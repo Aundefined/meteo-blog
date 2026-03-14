@@ -247,7 +247,7 @@ function setTyping(visible) {
 }
 
 function initChat() {
-  addMessage('Hola 👋 Soy un asistente que puede explicarte cómo está construido este proyecto. Pregúntame sobre la arquitectura, el código, las decisiones de diseño o las tecnologías usadas.', 'bot');
+  addMessage('Hola 👋 Soy Nuwe, un asistente que puede explicarte cómo está construido este proyecto. Pregúntame sobre la arquitectura, el código, las decisiones de diseño o las tecnologías usadas.', 'bot');
 
   const suggestionsEl = document.getElementById('chat-suggestions');
   SUGGESTIONS.forEach(s => {
