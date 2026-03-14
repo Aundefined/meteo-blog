@@ -39,34 +39,42 @@ COMUNIDADES = [
 ]
 
 
-def aemet_get(path: str, _retry: bool = True):
+def aemet_get(path: str, max_retries: int = 3):
     """
     Llama a AEMET en dos pasos:
     1. GET /opendata/api/{path} → JSON con campo 'datos' (URL)
     2. GET {datos_url} → datos reales en JSON
-    Reintenta una vez si recibe 429.
+    Reintenta con backoff exponencial si recibe 429.
     """
-    try:
-        r = requests.get(f"{AEMET_BASE}{path}", params={"api_key": AEMET_API_KEY}, timeout=10)
-        if r.status_code == 429 and _retry:
-            print(f"  429 en {path}, esperando 20s...")
-            time.sleep(20)
-            return aemet_get(path, _retry=False)
-        r.raise_for_status()
-        datos_url = r.json().get("datos")
-        if not datos_url:
-            print(f"Sin URL de datos para: {path}")
+    for intento in range(max_retries + 1):
+        try:
+            r = requests.get(f"{AEMET_BASE}{path}", params={"api_key": AEMET_API_KEY}, timeout=10)
+            if r.status_code == 429:
+                wait = 10 * (2 ** intento)
+                print(f"  429 en {path}, intento {intento + 1}/{max_retries + 1}, esperando {wait}s...")
+                time.sleep(wait)
+                continue
+            r.raise_for_status()
+            datos_url = r.json().get("datos")
+            if not datos_url:
+                print(f"Sin URL de datos para: {path}")
+                return None
+            r2 = requests.get(datos_url, timeout=10)
+            if r2.status_code == 429:
+                wait = 10 * (2 ** intento)
+                print(f"  429 en datos URL, intento {intento + 1}/{max_retries + 1}, esperando {wait}s...")
+                time.sleep(wait)
+                continue
+            r2.raise_for_status()
+            return r2.json()
+        except requests.exceptions.HTTPError as e:
+            print(f"Error HTTP AEMET {path}: {e}")
             return None
-        r2 = requests.get(datos_url, timeout=10)
-        if r2.status_code == 429 and _retry:
-            print(f"  429 en datos URL, esperando 10s...")
-            time.sleep(10)
-            return aemet_get(path, _retry=False)
-        r2.raise_for_status()
-        return r2.json()
-    except Exception as e:
-        print(f"Error AEMET {path}: {e}")
-        return None
+        except Exception as e:
+            print(f"Error AEMET {path}: {e}")
+            return None
+    print(f"Agotados {max_retries + 1} intentos para {path}")
+    return None
 
 
 def obtener_prediccion_municipio(cod_municipio: str) -> dict | None:
@@ -202,7 +210,7 @@ def ejecutar() -> dict:
             "cielo": numericos["cielo"] if numericos else "Sin datos",
         })
 
-        time.sleep(2)  # Respetar rate limit de AEMET
+        time.sleep(4)  # Respetar rate limit de AEMET
 
     print("Generando resumen con Bedrock...")
     resumen = generar_resumen_bedrock(comunidades_resultado)
