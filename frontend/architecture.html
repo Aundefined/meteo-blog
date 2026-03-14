@@ -20,7 +20,8 @@
   }
 
   .container {
-    width: 1080px;
+    width: 100%;
+    max-width: 1080px;
     background: linear-gradient(145deg, #0d1220 0%, #111827 50%, #0d1220 100%);
     border-radius: 20px;
     border: 1px solid rgba(99, 179, 237, 0.12);
@@ -244,6 +245,58 @@
     color: #facc15;
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    body { padding: 20px 12px; }
+
+    .container { padding: 28px 20px; border-radius: 14px; }
+
+    .header h1 { font-size: 18px; }
+    .header p  { font-size: 13px; }
+    .header    { margin-bottom: 28px; }
+
+    .row {
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .node {
+      width: 100%;
+      max-width: 320px;
+      min-width: unset;
+      margin: 0 auto;
+    }
+
+    .node-brain { min-width: unset; }
+
+    /* turn horizontal arrows into vertical arrows on mobile */
+    .arrow-right {
+      padding: 4px 0;
+      justify-content: center;
+      width: 100%;
+    }
+    .arrow-right svg {
+      transform: rotate(90deg);
+      width: 20px;
+      height: 28px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .tech-stack { gap: 10px; margin-top: 24px; padding-top: 20px; }
+    .tech-tag   { font-size: 10px; padding: 5px 10px; }
+  }
+
+  @media (max-width: 480px) {
+    .container { padding: 20px 14px; }
+    .header h1 { font-size: 16px; }
+    .node      { padding: 16px 18px; }
+    .node-icon { font-size: 22px; margin-bottom: 8px; }
+    .node-title    { font-size: 12px; }
+    .node-subtitle { font-size: 10px; }
   }
 </style>
 </head>
