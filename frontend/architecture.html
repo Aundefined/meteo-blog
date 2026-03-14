@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meteo Blog — Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0e17;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'DM Sans', sans-serif;
+    padding: 40px 20px;
+  }
+
+  .container {
+    width: 1080px;
+    background: linear-gradient(145deg, #0d1220 0%, #111827 50%, #0d1220 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(99, 179, 237, 0.12);
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 20%, rgba(250, 204, 21, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(56, 189, 248, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 44px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 26px;
+    font-weight: 700;
+    color: #e2e8f0;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .header h1 span { color: #facc15; }
+
+  .header p {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 400;
+  }
+
+  .architecture {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .row {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .node {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(99, 179, 237, 0.15);
+    border-radius: 14px;
+    padding: 20px 24px;
+    text-align: center;
+    position: relative;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    min-width: 160px;
+  }
+
+  .node:hover {
+    transform: translateY(-2px);
+  }
+
+  .node-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .node-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 4px;
+  }
+
+  .node-subtitle {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.4;
+  }
+
+  /* Color accents */
+  .node-trigger {
+    border-color: rgba(250, 204, 21, 0.25);
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.06) 0%, rgba(15, 23, 42, 0.8) 100%);
+  }
+  .node-trigger:hover { border-color: rgba(250, 204, 21, 0.5); box-shadow: 0 8px 32px rgba(250, 204, 21, 0.08); }
+
+  .node-data {
+    border-color: rgba(52, 211, 153, 0.25);
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.06) 0%, rgba(15, 23, 42, 0.8) 100%);
+  }
+  .node-data:hover { border-color: rgba(52, 211, 153, 0.5); box-shadow: 0 8px 32px rgba(52, 211, 153, 0.08); }
+
+  .node-brain {
+    border-color: rgba(167, 139, 250, 0.3);
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.08) 0%, rgba(15, 23, 42, 0.8) 100%);
+    min-width: 220px;
+  }
+  .node-brain:hover { border-color: rgba(167, 139, 250, 0.55); box-shadow: 0 8px 32px rgba(167, 139, 250, 0.12); }
+
+  .node-storage {
+    border-color: rgba(56, 189, 248, 0.25);
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.06) 0%, rgba(15, 23, 42, 0.8) 100%);
+  }
+  .node-storage:hover { border-color: rgba(56, 189, 248, 0.5); box-shadow: 0 8px 32px rgba(56, 189, 248, 0.08); }
+
+  .node-cdn {
+    border-color: rgba(248, 113, 113, 0.25);
+    background: linear-gradient(135deg, rgba(248, 113, 113, 0.06) 0%, rgba(15, 23, 42, 0.8) 100%);
+  }
+  .node-cdn:hover { border-color: rgba(248, 113, 113, 0.5); box-shadow: 0 8px 32px rgba(248, 113, 113, 0.08); }
+
+  .node-infra {
+    border-color: rgba(99, 179, 237, 0.2);
+    background: linear-gradient(135deg, rgba(99, 179, 237, 0.05) 0%, rgba(15, 23, 42, 0.8) 100%);
+  }
+  .node-infra:hover { border-color: rgba(99, 179, 237, 0.45); box-shadow: 0 8px 32px rgba(99, 179, 237, 0.08); }
+
+  .node-rag {
+    border-color: rgba(251, 146, 60, 0.3);
+    background: linear-gradient(135deg, rgba(251, 146, 60, 0.07) 0%, rgba(15, 23, 42, 0.8) 100%);
+  }
+  .node-rag:hover { border-color: rgba(251, 146, 60, 0.55); box-shadow: 0 8px 32px rgba(251, 146, 60, 0.1); }
+
+  /* Arrows */
+  .arrow-down {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 0;
+  }
+
+  .arrow-down svg { width: 20px; height: 28px; }
+
+  .arrow-right {
+    display: flex;
+    align-items: center;
+    padding: 0 2px;
+  }
+
+  .arrow-right svg { width: 32px; height: 20px; }
+
+  .flow-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #475569;
+    text-align: center;
+    padding: 2px 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #334155;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .separator {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.12), transparent);
+    margin: 8px 0;
+  }
+
+  .tech-stack {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(99, 179, 237, 0.08);
+    flex-wrap: wrap;
+  }
+
+  .tech-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #475569;
+    padding: 6px 14px;
+    border: 1px solid rgba(99, 179, 237, 0.1);
+    border-radius: 20px;
+    background: rgba(15, 23, 42, 0.5);
+  }
+
+  /* Design note box */
+  .design-note {
+    margin-top: 20px;
+    padding: 16px 20px;
+    border: 1px dashed rgba(250, 204, 21, 0.2);
+    border-radius: 10px;
+    background: rgba(250, 204, 21, 0.03);
+    text-align: center;
+  }
+
+  .design-note p {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  .design-note strong {
+    color: #facc15;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Meteo Blog <span>// Architecture</span></h1>
+      <p>Resúmenes meteorológicos impulsados por IA para España — totalmente serverless en AWS</p>
+    </div>
+
+    <div class="architecture">
+
+      <!-- TRIGGER -->
+      <div class="section-label">1 — Trigger</div>
+      <div class="row">
+        <div class="node node-trigger">
+          <span class="node-icon">&#9200;</span>
+          <div class="node-title">EventBridge Scheduler</div>
+          <div class="node-subtitle">cron: 5x/día (hora España)<br>0h, 6h, 10h, 14h, 18h</div>
+        </div>
+      </div>
+
+      <div class="arrow-down">
+        <svg viewBox="0 0 20 28"><path d="M10 0 L10 22 M4 16 L10 24 L16 16" stroke="#facc15" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/></svg>
+      </div>
+      <div class="flow-label">invoca</div>
+
+      <!-- DATA + LAMBDA + LLM -->
+      <div class="section-label">2 — Ingesta + Inferencia</div>
+      <div class="row">
+        <div class="node node-data">
+          <span class="node-icon">&#127782;&#65039;</span>
+          <div class="node-title">AEMET OpenData API</div>
+          <div class="node-subtitle">17 CC.AA. · temp, lluvia, cielo<br>Rate-limited con reintentos</div>
+        </div>
+
+        <div class="arrow-right">
+          <svg viewBox="0 0 32 20"><path d="M0 10 L24 10 M18 4 L26 10 L18 16" stroke="#34d399" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/></svg>
+        </div>
+
+        <div class="node node-brain">
+          <span class="node-icon">&#129504;</span>
+          <div class="node-title">AWS Lambda</div>
+          <div class="node-subtitle">Python 3.12 · Docker<br>Fetch → Prompt → LLM → S3</div>
+        </div>
+
+        <div class="arrow-right">
+          <svg viewBox="0 0 32 20"><path d="M0 10 L24 10 M18 4 L26 10 L18 16" stroke="#a78bfa" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/></svg>
+        </div>
+
+        <div class="node node-brain">
+          <span class="node-icon">&#10024;</span>
+          <div class="node-title">Amazon Bedrock</div>
+          <div class="node-subtitle">Amazon Nova Micro<br>Resumen meteorológico<br>en lenguaje natural</div>
+        </div>
+      </div>
+
+      <div class="arrow-down">
+        <svg viewBox="0 0 20 28"><path d="M10 0 L10 22 M4 16 L10 24 L16 16" stroke="#38bdf8" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/></svg>
+      </div>
+      <div class="flow-label">weather.json + invalidación caché</div>
+
+      <!-- STORAGE + DELIVERY -->
+      <div class="section-label">3 — Storage + Delivery</div>
+      <div class="row">
+        <div class="node node-storage">
+          <span class="node-icon">&#128451;</span>
+          <div class="node-title">Amazon S3</div>
+          <div class="node-subtitle">Frontend estático +<br>weather.json (datos)</div>
+        </div>
+
+        <div class="arrow-right">
+          <svg viewBox="0 0 32 20"><path d="M0 10 L24 10 M18 4 L26 10 L18 16" stroke="#38bdf8" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/></svg>
+        </div>
+
+        <div class="node node-cdn">
+          <span class="node-icon">&#127760;</span>
+          <div class="node-title">CloudFront CDN</div>
+          <div class="node-subtitle">HTTPS · OAC · TTL 5min datos<br>TTL 1h assets estáticos</div>
+        </div>
+
+        <div class="arrow-right">
+          <svg viewBox="0 0 32 20"><path d="M0 10 L24 10 M18 4 L26 10 L18 16" stroke="#f87171" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/></svg>
+        </div>
+
+        <div class="node node-cdn">
+          <span class="node-icon">&#128241;</span>
+          <div class="node-title">Frontend</div>
+          <div class="node-subtitle">HTML + Vanilla JS<br>Tailwind CSS · Sin frameworks</div>
+        </div>
+      </div>
+
+      <div class="separator"></div>
+
+      <!-- RAG CHATBOT -->
+      <div class="section-label">4 — RAG Chatbot</div>
+      <div class="row">
+        <div class="node node-rag">
+          <span class="node-icon">&#128196;</span>
+          <div class="node-title">Repo (código + IaC)</div>
+          <div class="node-subtitle">Chunking semántico<br>Script local offline</div>
+        </div>
+
+        <div class="arrow-right">
+          <svg viewBox="0 0 32 20"><path d="M0 10 L24 10 M18 4 L26 10 L18 16" stroke="#fb923c" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/></svg>
+        </div>
+
+        <div class="node node-rag">
+          <span class="node-icon">&#128202;</span>
+          <div class="node-title">Titan Embed v2 + FAISS</div>
+          <div class="node-subtitle">256 dims · cosine similarity<br>Índice en S3</div>
+        </div>
+
+        <div class="arrow-right">
+          <svg viewBox="0 0 32 20"><path d="M0 10 L24 10 M18 4 L26 10 L18 16" stroke="#fb923c" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/></svg>
+        </div>
+
+        <div class="node node-rag">
+          <span class="node-icon">&#128172;</span>
+          <div class="node-title">API Gateway + Lambda</div>
+          <div class="node-subtitle">Embed pregunta → busca chunks<br>→ Nova Micro → respuesta</div>
+        </div>
+      </div>
+
+      <div class="separator"></div>
+
+      <!-- INFRA / CI/CD -->
+      <div class="section-label">4 — Infraestructura & CI/CD</div>
+      <div class="row">
+        <div class="node node-infra">
+          <span class="node-icon">&#128736;</span>
+          <div class="node-title">Terraform</div>
+          <div class="node-subtitle">IaC · S3 remote state<br>Lambda, IAM, ECR, S3,<br>CloudFront, Scheduler</div>
+        </div>
+
+        <div class="node node-infra">
+          <span class="node-icon">&#128230;</span>
+          <div class="node-title">Docker + ECR</div>
+          <div class="node-subtitle">Container image<br>Lifecycle: últimas 10</div>
+        </div>
+
+        <div class="node node-infra">
+          <span class="node-icon">&#9654;</span>
+          <div class="node-title">GitHub Actions</div>
+          <div class="node-subtitle">Push to main → deploy<br>OIDC auth (sin secrets AWS)</div>
+        </div>
+      </div>  
+
+    </div>
+
+    <div class="tech-stack">
+      <span class="tech-tag">Python</span>
+      <span class="tech-tag">Terraform</span>
+      <span class="tech-tag">Docker</span>
+      <span class="tech-tag">AWS Lambda</span>
+      <span class="tech-tag">Bedrock</span>
+      <span class="tech-tag">S3</span>
+      <span class="tech-tag">CloudFront</span>
+      <span class="tech-tag">AEMET API</span>
+      <span class="tech-tag">GitHub Actions</span>
+    </div>
+  </div>
+</body>
+</html>
