@@ -105,6 +105,32 @@ function getRainFill(prob) {
   return '#dbeafe';
 }
 
+function getTempFill(temp) {
+  if (temp === null || temp === undefined) return '#e2e8f0';
+  if (temp >= 40) return '#7e22ce';
+  if (temp >= 30) return '#dc2626';
+  if (temp >= 20) return '#f97316';
+  if (temp >= 10) return '#fde68a';
+  return '#bfdbfe';
+}
+
+let mapComunidades = null;
+
+function updateMapColors(mode) {
+  if (!mapComunidades) return;
+  const svg = document.querySelector('#spain-map svg');
+  if (!svg) return;
+  mapComunidades.forEach(c => {
+    const svgId = SVG_ID_MAP[c.nombre];
+    if (!svgId) return;
+    const path = svg.getElementById(svgId);
+    if (!path) return;
+    path.style.fill = mode === 'temp' ? getTempFill(c.temp_max) : getRainFill(c.prob_lluvia);
+  });
+  document.getElementById('legend-rain').classList.toggle('hidden', mode !== 'rain');
+  document.getElementById('legend-temp').classList.toggle('hidden', mode !== 'temp');
+}
+
 async function loadMap(comunidades) {
   const res = await fetch(MAP_URL);
   const svgText = await res.text();
@@ -140,7 +166,7 @@ async function loadMap(comunidades) {
     const path = svg.getElementById(svgId);
     if (!path) return;
 
-    path.style.fill = getRainFill(c.prob_lluvia);
+    path.style.fill = getTempFill(c.temp_max);
     path.style.stroke = '#fff';
     path.style.strokeWidth = '1';
     path.style.cursor = 'pointer';
@@ -199,7 +225,12 @@ async function load() {
 
     document.getElementById('summary-text').textContent = data.summary;
 
+    mapComunidades = data.comunidades;
     await loadMap(data.comunidades);
+
+    document.querySelectorAll('input[name="map-mode"]').forEach(radio => {
+      radio.addEventListener('change', e => updateMapColors(e.target.value));
+    });
 
     document.getElementById('cards-grid').innerHTML =
       data.comunidades.map(createCard).join('');
