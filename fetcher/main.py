@@ -77,45 +77,49 @@ def aemet_get(path: str, max_retries: int = 3):
     return None
 
 
-def obtener_prediccion_municipio(cod_municipio: str) -> dict | None:
-    """Datos numéricos del municipio: temp max/min, prob lluvia, estado cielo."""
+def obtener_prediccion_municipio(cod_municipio: str) -> list[dict] | None:
+    """Datos numéricos del municipio para los próximos 5 días: temp max/min, prob lluvia, estado cielo."""
     data = aemet_get(f"/prediccion/especifica/municipio/diaria/{cod_municipio}")
     if not data:
         return None
     try:
-        dia = data[0]["prediccion"]["dia"][0]
-        print(f"    fecha datos: {dia.get('fecha')}")
+        dias_raw = data[0]["prediccion"]["dia"][:5]
+        result = []
+        for dia in dias_raw:
+            print(f"    fecha datos: {dia.get('fecha')}")
 
-        temp = dia.get("temperatura", {})
-        temp_max = temp.get("maxima")
-        temp_min = temp.get("minima")
+            temp = dia.get("temperatura", {})
+            temp_max = temp.get("maxima")
+            temp_min = temp.get("minima")
 
-        # Probabilidad de precipitación: cogemos el máximo del día
-        prob_lluvia = 0
-        for franja in dia.get("probPrecipitacion", []):
-            try:
-                prob_lluvia = max(prob_lluvia, int(franja.get("value") or 0))
-            except (ValueError, TypeError):
-                pass
+            # Probabilidad de precipitación: cogemos el máximo del día
+            prob_lluvia = 0
+            for franja in dia.get("probPrecipitacion", []):
+                try:
+                    prob_lluvia = max(prob_lluvia, int(franja.get("value") or 0))
+                except (ValueError, TypeError):
+                    pass
 
-        # Estado del cielo: preferimos franja diurna "12-24", si no la primera con descripción
-        cielo = None
-        for franja in dia.get("estadoCielo", []):
-            desc = franja.get("descripcion", "").strip()
-            if not desc:
-                continue
-            if franja.get("periodo") == "12-24":
-                cielo = desc
-                break
-            if cielo is None:
-                cielo = desc  # primera válida como fallback
+            # Estado del cielo: preferimos franja diurna "12-24", si no la primera con descripción
+            cielo = None
+            for franja in dia.get("estadoCielo", []):
+                desc = franja.get("descripcion", "").strip()
+                if not desc:
+                    continue
+                if franja.get("periodo") == "12-24":
+                    cielo = desc
+                    break
+                if cielo is None:
+                    cielo = desc  # primera válida como fallback
 
-        return {
-            "temp_max": temp_max,
-            "temp_min": temp_min,
-            "prob_lluvia": prob_lluvia,
-            "cielo": cielo or "Sin datos",
-        }
+            result.append({
+                "fecha": dia.get("fecha", "")[:10],
+                "temp_max": temp_max,
+                "temp_min": temp_min,
+                "prob_lluvia": prob_lluvia,
+                "cielo": cielo or "Sin datos",
+            })
+        return result
     except Exception as e:
         print(f"Error parseando municipio {cod_municipio}: {e}")
         return None
@@ -199,21 +203,31 @@ def ejecutar() -> dict:
     for ccaa in COMUNIDADES:
         print(f"Procesando {ccaa['nombre']}...")
 
-        numericos = obtener_prediccion_municipio(ccaa["cod_municipio"])
+        dias = obtener_prediccion_municipio(ccaa["cod_municipio"])
 
         comunidades_resultado.append({
             "nombre": ccaa["nombre"],
             "capital": ccaa["capital"],
-            "temp_max": numericos["temp_max"] if numericos else None,
-            "temp_min": numericos["temp_min"] if numericos else None,
-            "prob_lluvia": numericos["prob_lluvia"] if numericos else None,
-            "cielo": numericos["cielo"] if numericos else "Sin datos",
+            "dias": dias if dias else [],
         })
 
         time.sleep(4)  # Respetar rate limit de AEMET
 
+    # El resumen usa solo los datos del día de hoy (índice 0)
+    comunidades_hoy = [
+        {
+            "nombre": c["nombre"],
+            "capital": c["capital"],
+            "temp_max": c["dias"][0]["temp_max"] if c["dias"] else None,
+            "temp_min": c["dias"][0]["temp_min"] if c["dias"] else None,
+            "prob_lluvia": c["dias"][0]["prob_lluvia"] if c["dias"] else None,
+            "cielo": c["dias"][0]["cielo"] if c["dias"] else "Sin datos",
+        }
+        for c in comunidades_resultado
+    ]
+
     print("Generando resumen con Bedrock...")
-    resumen = generar_resumen_bedrock(comunidades_resultado)
+    resumen = generar_resumen_bedrock(comunidades_hoy)
 
     datos = {
         "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),

@@ -1,142 +1,703 @@
 {
-  "updated_at": "2026-03-13T13:52:47Z",
-  "summary": "Hoy en España predominan los cielos nubosos y cubiertos con probabilidades de lluvia en Asturias, Cantabria, Castilla y León, Galicia, Navarra, La Rioja y País Vasco. Las temperaturas son frescas en general, con máximas que oscilan entre los 16°C en Cataluña y las 24°C en Andalucía y Región de Murcia. Destaca la ausencia de lluvia en la mayor parte del país, salvo en las regiones mencionadas anteriormente.",
+  "updated_at": "2026-03-16T19:41:23Z",
+  "summary": "Hoy, España disfruta de un día mayormente despejado con temperaturas agradables en la mayoría de las regiones, oscilando entre los 3°C en Castilla y León y Valladolid hasta los 23°C en Sevilla. Canarias es la excepción con intervalos nubosos y una probabilidad de lluvia del 25%, mientras que el resto del país mantiene cielos poco nubosos o despejados. Las temperaturas mínimas son frescas en el norte y las centrales, pero más cálidas en el sur.",
   "comunidades": [
     {
       "nombre": "Andalucía",
       "capital": "Sevilla",
-      "temp_max": 24,
-      "temp_min": 9,
-      "prob_lluvia": 0,
-      "cielo": "Poco nuboso"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 23,
+          "temp_min": 11,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 25,
+          "temp_min": 10,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 23,
+          "temp_min": 10,
+          "prob_lluvia": 95,
+          "cielo": "Intervalos nubosos con lluvia"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 25,
+          "temp_min": 12,
+          "prob_lluvia": 10,
+          "cielo": "Muy nuboso"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 22,
+          "temp_min": 12,
+          "prob_lluvia": 70,
+          "cielo": "Muy nuboso con lluvia"
+        }
+      ]
     },
     {
       "nombre": "Aragón",
       "capital": "Zaragoza",
-      "temp_max": 20,
-      "temp_min": 7,
-      "prob_lluvia": 10,
-      "cielo": "Intervalos nubosos"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 19,
+          "temp_min": 7,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 21,
+          "temp_min": 4,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 21,
+          "temp_min": 7,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 17,
+          "temp_min": 9,
+          "prob_lluvia": 15,
+          "cielo": "Muy nuboso"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 18,
+          "temp_min": 6,
+          "prob_lluvia": 10,
+          "cielo": "Intervalos nubosos"
+        }
+      ]
     },
     {
       "nombre": "Asturias",
       "capital": "Oviedo",
-      "temp_max": 18,
-      "temp_min": 5,
-      "prob_lluvia": 100,
-      "cielo": "Cubierto con lluvia"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 17,
+          "temp_min": 8,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 22,
+          "temp_min": 5,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 20,
+          "temp_min": 10,
+          "prob_lluvia": 0,
+          "cielo": "Nubes altas"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 23,
+          "temp_min": 7,
+          "prob_lluvia": 15,
+          "cielo": "Intervalos nubosos"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 20,
+          "temp_min": 8,
+          "prob_lluvia": 25,
+          "cielo": "Intervalos nubosos"
+        }
+      ]
     },
     {
       "nombre": "Islas Baleares",
       "capital": "Palma",
-      "temp_max": 18,
-      "temp_min": 11,
-      "prob_lluvia": 0,
-      "cielo": "Muy nuboso"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 19,
+          "temp_min": 7,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 20,
+          "temp_min": 6,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 20,
+          "temp_min": 6,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 18,
+          "temp_min": 9,
+          "prob_lluvia": 15,
+          "cielo": "Nuboso"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 18,
+          "temp_min": 8,
+          "prob_lluvia": 5,
+          "cielo": "Poco nuboso"
+        }
+      ]
     },
     {
       "nombre": "Canarias",
       "capital": "Las Palmas de G.C.",
-      "temp_max": 22,
-      "temp_min": 16,
-      "prob_lluvia": 0,
-      "cielo": "Nuboso"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 20,
+          "temp_min": 17,
+          "prob_lluvia": 25,
+          "cielo": "Intervalos nubosos"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 21,
+          "temp_min": 16,
+          "prob_lluvia": 100,
+          "cielo": "Intervalos nubosos con tormenta"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 21,
+          "temp_min": 16,
+          "prob_lluvia": 100,
+          "cielo": "Intervalos nubosos con lluvia"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 20,
+          "temp_min": 14,
+          "prob_lluvia": 100,
+          "cielo": "Muy nuboso con lluvia"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 22,
+          "temp_min": 16,
+          "prob_lluvia": 100,
+          "cielo": "Intervalos nubosos con lluvia"
+        }
+      ]
     },
     {
       "nombre": "Cantabria",
       "capital": "Santander",
-      "temp_max": 18,
-      "temp_min": 9,
-      "prob_lluvia": 100,
-      "cielo": "Cubierto con lluvia"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 15,
+          "temp_min": 9,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 17,
+          "temp_min": 8,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 20,
+          "temp_min": 11,
+          "prob_lluvia": 0,
+          "cielo": "Nubes altas"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 19,
+          "temp_min": 10,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 19,
+          "temp_min": 11,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        }
+      ]
     },
     {
       "nombre": "Castilla y León",
       "capital": "Valladolid",
-      "temp_max": 16,
-      "temp_min": 3,
-      "prob_lluvia": 15,
-      "cielo": "Intervalos nubosos"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 17,
+          "temp_min": 3,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 24,
+          "temp_min": 3,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 20,
+          "temp_min": 4,
+          "prob_lluvia": 0,
+          "cielo": "Nuboso"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 20,
+          "temp_min": 4,
+          "prob_lluvia": 10,
+          "cielo": "Intervalos nubosos"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 18,
+          "temp_min": 5,
+          "prob_lluvia": 20,
+          "cielo": "Nuboso"
+        }
+      ]
     },
     {
       "nombre": "Castilla-La Mancha",
       "capital": "Toledo",
-      "temp_max": 20,
-      "temp_min": 7,
-      "prob_lluvia": 0,
-      "cielo": "Poco nuboso"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 18,
+          "temp_min": 4,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 23,
+          "temp_min": 6,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 21,
+          "temp_min": 6,
+          "prob_lluvia": 0,
+          "cielo": "Nuboso"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 21,
+          "temp_min": 7,
+          "prob_lluvia": 5,
+          "cielo": "Nubes altas"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 16,
+          "temp_min": 8,
+          "prob_lluvia": 40,
+          "cielo": "Cubierto"
+        }
+      ]
     },
     {
       "nombre": "Cataluña",
       "capital": "Barcelona",
-      "temp_max": 16,
-      "temp_min": 12,
-      "prob_lluvia": 0,
-      "cielo": "Nubes altas"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 17,
+          "temp_min": 7,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 17,
+          "temp_min": 10,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 17,
+          "temp_min": 10,
+          "prob_lluvia": 10,
+          "cielo": "Intervalos nubosos"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 16,
+          "temp_min": 11,
+          "prob_lluvia": 20,
+          "cielo": "Intervalos nubosos"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 17,
+          "temp_min": 7,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        }
+      ]
     },
     {
       "nombre": "Extremadura",
       "capital": "Mérida",
-      "temp_max": 21,
-      "temp_min": 4,
-      "prob_lluvia": 0,
-      "cielo": "Despejado"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 21,
+          "temp_min": 7,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 25,
+          "temp_min": 6,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 22,
+          "temp_min": 9,
+          "prob_lluvia": 80,
+          "cielo": "Intervalos nubosos con lluvia escasa"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 21,
+          "temp_min": 9,
+          "prob_lluvia": 20,
+          "cielo": "Cubierto"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 15,
+          "temp_min": 10,
+          "prob_lluvia": 80,
+          "cielo": "Cubierto con lluvia"
+        }
+      ]
     },
     {
       "nombre": "Galicia",
       "capital": "Santiago de Compostela",
-      "temp_max": 13,
-      "temp_min": 9,
-      "prob_lluvia": 100,
-      "cielo": "Cubierto con lluvia"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 21,
+          "temp_min": 8,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 22,
+          "temp_min": 7,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 20,
+          "temp_min": 10,
+          "prob_lluvia": 55,
+          "cielo": "Muy nuboso con lluvia escasa"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 22,
+          "temp_min": 9,
+          "prob_lluvia": 50,
+          "cielo": "Nuboso con lluvia escasa"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 19,
+          "temp_min": 11,
+          "prob_lluvia": 65,
+          "cielo": "Cubierto con lluvia escasa"
+        }
+      ]
     },
     {
       "nombre": "Comunidad de Madrid",
       "capital": "Madrid",
-      "temp_max": 18,
-      "temp_min": 5,
-      "prob_lluvia": 0,
-      "cielo": "Poco nuboso"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 18,
+          "temp_min": 3,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 21,
+          "temp_min": 6,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 19,
+          "temp_min": 7,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 19,
+          "temp_min": 8,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 15,
+          "temp_min": 9,
+          "prob_lluvia": 25,
+          "cielo": "Muy nuboso"
+        }
+      ]
     },
     {
       "nombre": "Región de Murcia",
       "capital": "Murcia",
-      "temp_max": 24,
-      "temp_min": 9,
-      "prob_lluvia": 0,
-      "cielo": "Despejado"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 19,
+          "temp_min": 7,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 21,
+          "temp_min": 7,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 19,
+          "temp_min": 5,
+          "prob_lluvia": 10,
+          "cielo": "Intervalos nubosos"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 18,
+          "temp_min": 7,
+          "prob_lluvia": 35,
+          "cielo": "Muy nuboso"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 17,
+          "temp_min": 7,
+          "prob_lluvia": 25,
+          "cielo": "Muy nuboso"
+        }
+      ]
     },
     {
       "nombre": "Navarra",
       "capital": "Pamplona",
-      "temp_max": 18,
-      "temp_min": 4,
-      "prob_lluvia": 100,
-      "cielo": "Nuboso con lluvia"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 15,
+          "temp_min": 3,
+          "prob_lluvia": 0,
+          "cielo": "Nubes altas"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 21,
+          "temp_min": 3,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 21,
+          "temp_min": 4,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 15,
+          "temp_min": 5,
+          "prob_lluvia": 10,
+          "cielo": "Nuboso"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 16,
+          "temp_min": 3,
+          "prob_lluvia": 5,
+          "cielo": "Poco nuboso"
+        }
+      ]
     },
     {
       "nombre": "La Rioja",
       "capital": "Logroño",
-      "temp_max": 20,
-      "temp_min": 6,
-      "prob_lluvia": 100,
-      "cielo": "Intervalos nubosos con lluvia"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 18,
+          "temp_min": 5,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 19,
+          "temp_min": 4,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 20,
+          "temp_min": 7,
+          "prob_lluvia": 0,
+          "cielo": "Nubes altas"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 16,
+          "temp_min": 7,
+          "prob_lluvia": 40,
+          "cielo": "Intervalos nubosos"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 17,
+          "temp_min": 5,
+          "prob_lluvia": 10,
+          "cielo": "Intervalos nubosos"
+        }
+      ]
     },
     {
       "nombre": "País Vasco",
       "capital": "Vitoria-Gasteiz",
-      "temp_max": 18,
-      "temp_min": 4,
-      "prob_lluvia": 100,
-      "cielo": "Nuboso con lluvia"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 15,
+          "temp_min": 5,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 22,
+          "temp_min": 3,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 21,
+          "temp_min": 5,
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 16,
+          "temp_min": 7,
+          "prob_lluvia": 5,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 17,
+          "temp_min": 5,
+          "prob_lluvia": 5,
+          "cielo": "Poco nuboso"
+        }
+      ]
     },
     {
       "nombre": "Comunitat Valenciana",
       "capital": "Valencia",
-      "temp_max": 19,
-      "temp_min": 10,
-      "prob_lluvia": 0,
-      "cielo": "Despejado"
+      "dias": [
+        {
+          "fecha": "2026-03-16",
+          "temp_max": 21,
+          "temp_min": 6,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-17",
+          "temp_max": 21,
+          "temp_min": 8,
+          "prob_lluvia": 0,
+          "cielo": "Despejado"
+        },
+        {
+          "fecha": "2026-03-18",
+          "temp_max": 18,
+          "temp_min": 8,
+          "prob_lluvia": 5,
+          "cielo": "Nubes altas"
+        },
+        {
+          "fecha": "2026-03-19",
+          "temp_max": 17,
+          "temp_min": 11,
+          "prob_lluvia": 95,
+          "cielo": "Nuboso"
+        },
+        {
+          "fecha": "2026-03-20",
+          "temp_max": 16,
+          "temp_min": 10,
+          "prob_lluvia": 25,
+          "cielo": "Muy nuboso"
+        }
+      ]
     }
   ]
 }
