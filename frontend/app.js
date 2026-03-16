@@ -107,11 +107,19 @@ function getRainFill(prob) {
 
 function getTempFill(temp) {
   if (temp === null || temp === undefined) return '#e2e8f0';
-  if (temp >= 40) return '#7e22ce';
-  if (temp >= 30) return '#dc2626';
-  if (temp >= 20) return '#f97316';
-  if (temp >= 10) return '#fde68a';
-  return '#bfdbfe';
+  if (temp >= 50) return '#7f0000';
+  if (temp >= 40) return '#cc0000';
+  if (temp >= 35) return '#ff3300';
+  if (temp >= 30) return '#ff7700';
+  if (temp >= 25) return '#ffbb00';
+  if (temp >= 20) return '#ffee00';
+  if (temp >= 15) return '#aadd00';
+  if (temp >= 10) return '#55cc00';
+  if (temp >= 5)  return '#00cc88';
+  if (temp >= 0)  return '#00aaee';
+  if (temp >= -10) return '#5566ff';
+  if (temp >= -20) return '#9933cc';
+  return '#880088';
 }
 
 let mapComunidades = null;
