@@ -32,6 +32,7 @@ const CIELO_EMOJI = {
   'Tormenta': '⛈️',
   'Nieve': '🌨️',
   'Niebla': '🌫️',
+  'Bruma': '🌫️',
   // Genéricos después
   'Despejado': '☀️',
   'Poco nuboso': '🌤️',
