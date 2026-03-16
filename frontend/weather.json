@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-03-16T19:41:23Z",
-  "summary": "Hoy, España disfruta de un día mayormente despejado con temperaturas agradables en la mayoría de las regiones, oscilando entre los 3°C en Castilla y León y Valladolid hasta los 23°C en Sevilla. Canarias es la excepción con intervalos nubosos y una probabilidad de lluvia del 25%, mientras que el resto del país mantiene cielos poco nubosos o despejados. Las temperaturas mínimas son frescas en el norte y las centrales, pero más cálidas en el sur.",
+  "updated_at": "2026-03-16T23:25:45Z",
+  "summary": "Hoy el tiempo es mayormente despejado en toda España, con temperaturas variando desde los 3°C en Castilla y León y Comunidad de Madrid hasta los 23°C en Andalucía y Galicia. Aunque no se espera lluvia en ninguna región, algunas zonas como Castilla y León y Comunidad de Madrid experimentarán temperaturas frías por la mañana.",
   "comunidades": [
     {
       "nombre": "Andalucía",
@@ -24,14 +24,14 @@
           "fecha": "2026-03-18",
           "temp_max": 23,
           "temp_min": 10,
-          "prob_lluvia": 95,
-          "cielo": "Intervalos nubosos con lluvia"
+          "prob_lluvia": 100,
+          "cielo": "Muy nuboso con lluvia"
         },
         {
           "fecha": "2026-03-19",
           "temp_max": 25,
           "temp_min": 12,
-          "prob_lluvia": 10,
+          "prob_lluvia": 25,
           "cielo": "Muy nuboso"
         },
         {
@@ -93,7 +93,7 @@
           "temp_max": 17,
           "temp_min": 8,
           "prob_lluvia": 0,
-          "cielo": "Poco nuboso"
+          "cielo": "Bruma"
         },
         {
           "fecha": "2026-03-17",
@@ -174,15 +174,15 @@
           "fecha": "2026-03-16",
           "temp_max": 20,
           "temp_min": 17,
-          "prob_lluvia": 25,
-          "cielo": "Intervalos nubosos"
+          "prob_lluvia": 0,
+          "cielo": "Poco nuboso"
         },
         {
           "fecha": "2026-03-17",
           "temp_max": 21,
           "temp_min": 16,
           "prob_lluvia": 100,
-          "cielo": "Intervalos nubosos con tormenta"
+          "cielo": "Nuboso con tormenta"
         },
         {
           "fecha": "2026-03-18",
@@ -216,7 +216,7 @@
           "temp_max": 15,
           "temp_min": 9,
           "prob_lluvia": 0,
-          "cielo": "Poco nuboso"
+          "cielo": "Despejado"
         },
         {
           "fecha": "2026-03-17",
@@ -257,7 +257,7 @@
           "temp_max": 17,
           "temp_min": 3,
           "prob_lluvia": 0,
-          "cielo": "Poco nuboso"
+          "cielo": "Despejado"
         },
         {
           "fecha": "2026-03-17",
@@ -311,7 +311,7 @@
           "fecha": "2026-03-18",
           "temp_max": 21,
           "temp_min": 6,
-          "prob_lluvia": 0,
+          "prob_lluvia": 5,
           "cielo": "Nuboso"
         },
         {
@@ -339,7 +339,7 @@
           "temp_max": 17,
           "temp_min": 7,
           "prob_lluvia": 0,
-          "cielo": "Poco nuboso"
+          "cielo": "Nubes altas"
         },
         {
           "fecha": "2026-03-17",
@@ -352,8 +352,8 @@
           "fecha": "2026-03-18",
           "temp_max": 17,
           "temp_min": 10,
-          "prob_lluvia": 10,
-          "cielo": "Intervalos nubosos"
+          "prob_lluvia": 20,
+          "cielo": "Nuboso"
         },
         {
           "fecha": "2026-03-19",
@@ -393,14 +393,14 @@
           "fecha": "2026-03-18",
           "temp_max": 22,
           "temp_min": 9,
-          "prob_lluvia": 80,
-          "cielo": "Intervalos nubosos con lluvia escasa"
+          "prob_lluvia": 100,
+          "cielo": "Nuboso con lluvia"
         },
         {
           "fecha": "2026-03-19",
           "temp_max": 21,
           "temp_min": 9,
-          "prob_lluvia": 20,
+          "prob_lluvia": 30,
           "cielo": "Cubierto"
         },
         {
@@ -421,7 +421,7 @@
           "temp_max": 21,
           "temp_min": 8,
           "prob_lluvia": 0,
-          "cielo": "Poco nuboso"
+          "cielo": "Despejado"
         },
         {
           "fecha": "2026-03-17",
@@ -434,7 +434,7 @@
           "fecha": "2026-03-18",
           "temp_max": 20,
           "temp_min": 10,
-          "prob_lluvia": 55,
+          "prob_lluvia": 60,
           "cielo": "Muy nuboso con lluvia escasa"
         },
         {
@@ -462,7 +462,7 @@
           "temp_max": 18,
           "temp_min": 3,
           "prob_lluvia": 0,
-          "cielo": "Despejado"
+          "cielo": "Poco nuboso"
         },
         {
           "fecha": "2026-03-17",
@@ -516,7 +516,7 @@
           "fecha": "2026-03-18",
           "temp_max": 19,
           "temp_min": 5,
-          "prob_lluvia": 10,
+          "prob_lluvia": 15,
           "cielo": "Intervalos nubosos"
         },
         {
@@ -544,7 +544,7 @@
           "temp_max": 15,
           "temp_min": 3,
           "prob_lluvia": 0,
-          "cielo": "Nubes altas"
+          "cielo": "Poco nuboso"
         },
         {
           "fecha": "2026-03-17",
@@ -599,7 +599,7 @@
           "temp_max": 20,
           "temp_min": 7,
           "prob_lluvia": 0,
-          "cielo": "Nubes altas"
+          "cielo": "Poco nuboso"
         },
         {
           "fecha": "2026-03-19",
