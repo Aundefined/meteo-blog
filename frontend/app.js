@@ -129,12 +129,24 @@ let weatherData = null;
 let mapComunidades = null;
 let mapEmojiElements = {};
 
+let sortAsc = false;
+
 function sortComunidades(comunidades, mode) {
   const key = mode === 'rain' ? 'prob_lluvia' : 'temp_max';
   return [...comunidades].sort((a, b) => {
-    const diff = (b[key] ?? -Infinity) - (a[key] ?? -Infinity);
+    const diff = sortAsc
+      ? (a[key] ?? -Infinity) - (b[key] ?? -Infinity)
+      : (b[key] ?? -Infinity) - (a[key] ?? -Infinity);
     return diff !== 0 ? diff : a.nombre.localeCompare(b.nombre, 'es');
   });
+}
+
+function renderCards() {
+  const mode = document.querySelector('input[name="map-mode"]:checked')?.value || 'temp';
+  document.getElementById('cards-grid').innerHTML = sortComunidades(mapComunidades, mode).map(createCard).join('');
+  const magnitud = mode === 'rain' ? 'probabilidad de lluvia' : 'temperatura';
+  const direccion = sortAsc ? 'de menor a mayor' : 'de mayor a menor';
+  document.getElementById('sort-label').textContent = `${magnitud} ${direccion}`;
 }
 
 function getComunidadesForDay(dayIndex) {
@@ -175,7 +187,7 @@ function updateDayView(dayIndex) {
   const mode = document.querySelector('input[name="map-mode"]:checked')?.value || 'temp';
   updateMapColors(mode);
 
-  document.getElementById('cards-grid').innerHTML = sortComunidades(mapComunidades, mode).map(createCard).join('');
+  renderCards();
 
   document.querySelectorAll('#day-selector button').forEach((btn, i) => {
     btn.className = `px-4 py-2 rounded-xl text-sm font-semibold shadow-sm transition-colors ${
@@ -315,13 +327,13 @@ async function load() {
       radio.addEventListener('change', e => {
         const mode = e.target.value;
         updateMapColors(mode);
-        document.getElementById('cards-grid').innerHTML = sortComunidades(mapComunidades, mode).map(createCard).join('');
+        renderCards();
       });
     });
 
     initDaySelector();
 
-    document.getElementById('cards-grid').innerHTML = sortComunidades(mapComunidades, 'temp').map(createCard).join('');
+    renderCards();
 
   } catch (err) {
     console.error(err);
@@ -332,6 +344,11 @@ async function load() {
 }
 
 load();
+
+document.getElementById('sort-toggle').addEventListener('click', () => {
+  sortAsc = !sortAsc;
+  renderCards();
+});
 
 // ---------------------------------------------------------------------------
 // Chatbot
