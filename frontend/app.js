@@ -129,6 +129,14 @@ let weatherData = null;
 let mapComunidades = null;
 let mapEmojiElements = {};
 
+function sortComunidades(comunidades, mode) {
+  const key = mode === 'rain' ? 'prob_lluvia' : 'temp_max';
+  return [...comunidades].sort((a, b) => {
+    const diff = (b[key] ?? -Infinity) - (a[key] ?? -Infinity);
+    return diff !== 0 ? diff : a.nombre.localeCompare(b.nombre, 'es');
+  });
+}
+
 function getComunidadesForDay(dayIndex) {
   if (!weatherData) return [];
   return weatherData.comunidades.map(c => {
@@ -167,7 +175,7 @@ function updateDayView(dayIndex) {
   const mode = document.querySelector('input[name="map-mode"]:checked')?.value || 'temp';
   updateMapColors(mode);
 
-  document.getElementById('cards-grid').innerHTML = mapComunidades.map(createCard).join('');
+  document.getElementById('cards-grid').innerHTML = sortComunidades(mapComunidades, mode).map(createCard).join('');
 
   document.querySelectorAll('#day-selector button').forEach((btn, i) => {
     btn.className = `px-4 py-2 rounded-xl text-sm font-semibold shadow-sm transition-colors ${
@@ -304,12 +312,16 @@ async function load() {
     await loadMap(mapComunidades);
 
     document.querySelectorAll('input[name="map-mode"]').forEach(radio => {
-      radio.addEventListener('change', e => updateMapColors(e.target.value));
+      radio.addEventListener('change', e => {
+        const mode = e.target.value;
+        updateMapColors(mode);
+        document.getElementById('cards-grid').innerHTML = sortComunidades(mapComunidades, mode).map(createCard).join('');
+      });
     });
 
     initDaySelector();
 
-    document.getElementById('cards-grid').innerHTML = mapComunidades.map(createCard).join('');
+    document.getElementById('cards-grid').innerHTML = sortComunidades(mapComunidades, 'temp').map(createCard).join('');
 
   } catch (err) {
     console.error(err);
