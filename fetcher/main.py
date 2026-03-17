@@ -2,6 +2,9 @@ import json
 import os
 import time
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+
+TZ_MADRID = ZoneInfo("Europe/Madrid")
 
 import boto3
 import requests
@@ -83,7 +86,13 @@ def obtener_prediccion_municipio(cod_municipio: str) -> list[dict] | None:
     if not data:
         return None
     try:
-        dias_raw = data[0]["prediccion"]["dia"][:5]
+        hoy = datetime.now(TZ_MADRID).date()
+        todos_dias = data[0]["prediccion"]["dia"]
+        inicio = next(
+            (i for i, d in enumerate(todos_dias) if d.get("fecha", "")[:10] >= str(hoy)),
+            0
+        )
+        dias_raw = todos_dias[inicio:inicio + 5]
         result = []
         for dia in dias_raw:
             print(f"    fecha datos: {dia.get('fecha')}")
@@ -125,7 +134,7 @@ def obtener_prediccion_municipio(cod_municipio: str) -> list[dict] | None:
         return None
 
 
-def generar_resumen_bedrock(comunidades: list[dict]) -> str:
+def generar_resumen_bedrock(comunidades: list[dict], manana: bool = False) -> str:
     """Genera un resumen meteorológico global a partir de los datos numéricos de las 17 CC.AA."""
     bedrock = boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
 
@@ -137,11 +146,12 @@ def generar_resumen_bedrock(comunidades: list[dict]) -> str:
         if c["temp_max"] is not None
     )
 
+    referencia = "mañana" if manana else "hoy"
     prompt = (
-        "Eres un meteorólogo español. Estos son los datos meteorológicos de hoy "
+        f"Eres un meteorólogo español. Estos son los datos meteorológicos de {referencia} "
         "para las capitales de cada comunidad autónoma de España:\n\n"
         f"{lineas}\n\n"
-        "Escribe un resumen general del tiempo en España hoy en 3-4 frases en español. "
+        f"Escribe un resumen general del tiempo en España {referencia} en 3-4 frases en español. "
         "Sé conciso y destaca cualquier anomalía regional importante (por ejemplo, si llueve "
         "en una zona mientras el resto está despejado, o temperaturas extremas en alguna región). "
         "Responde ÚNICAMENTE con el resumen, sin título ni introducción."
@@ -196,7 +206,7 @@ def invalidar_cloudfront() -> None:
 
 
 def ejecutar() -> dict:
-    print(f"Iniciando fetch - {datetime.now(timezone.utc).isoformat()}")
+    print(f"Iniciando fetch - {datetime.now(TZ_MADRID).isoformat()}")
 
     comunidades_resultado = []
 
@@ -213,24 +223,26 @@ def ejecutar() -> dict:
 
         time.sleep(4)  # Respetar rate limit de AEMET
 
-    # El resumen usa solo los datos del día de hoy (índice 0)
-    comunidades_hoy = [
+    # A partir de las 18h Madrid generamos el resumen para mañana (índice 1)
+    manana = datetime.now(TZ_MADRID).hour >= 18
+    idx = 1 if manana else 0
+    comunidades_dia = [
         {
             "nombre": c["nombre"],
             "capital": c["capital"],
-            "temp_max": c["dias"][0]["temp_max"] if c["dias"] else None,
-            "temp_min": c["dias"][0]["temp_min"] if c["dias"] else None,
-            "prob_lluvia": c["dias"][0]["prob_lluvia"] if c["dias"] else None,
-            "cielo": c["dias"][0]["cielo"] if c["dias"] else "Sin datos",
+            "temp_max": c["dias"][idx]["temp_max"] if len(c["dias"]) > idx else None,
+            "temp_min": c["dias"][idx]["temp_min"] if len(c["dias"]) > idx else None,
+            "prob_lluvia": c["dias"][idx]["prob_lluvia"] if len(c["dias"]) > idx else None,
+            "cielo": c["dias"][idx]["cielo"] if len(c["dias"]) > idx else "Sin datos",
         }
         for c in comunidades_resultado
     ]
 
-    print("Generando resumen con Bedrock...")
-    resumen = generar_resumen_bedrock(comunidades_hoy)
+    print(f"Generando resumen con Bedrock ({'mañana' if manana else 'hoy'})...")
+    resumen = generar_resumen_bedrock(comunidades_dia, manana=manana)
 
     datos = {
-        "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "updated_at": datetime.now(TZ_MADRID).strftime("%Y-%m-%dT%H:%M:%S%z"),
         "summary": resumen,
         "comunidades": comunidades_resultado,
     }
