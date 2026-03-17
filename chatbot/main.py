@@ -1,5 +1,9 @@
 import json
 import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+TZ_MADRID = ZoneInfo("Europe/Madrid")
 
 import boto3
 import faiss
@@ -125,9 +129,11 @@ def generate_answer(question: str, chunks: list[dict]) -> str:
 
 def generate_weather_answer(question: str, weather: dict) -> str:
     context = json.dumps(weather, ensure_ascii=False, indent=2)
+    hoy = datetime.now(TZ_MADRID).strftime("%A %d de %B de %Y")
     prompt = (
         "Eres Nuwe, un asistente meteorológico. Tienes los datos de predicción del tiempo "
         "para las próximas comunidades autónomas de España.\n\n"
+        f"Hoy es {hoy}.\n\n"
         f"DATOS METEOROLÓGICOS:\n{context}\n\n"
         f"PREGUNTA: {question}\n\n"
         "Responde en español de forma clara y concisa usando únicamente los datos proporcionados."
