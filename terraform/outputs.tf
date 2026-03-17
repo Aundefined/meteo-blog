@@ -1,6 +1,11 @@
 output "cloudfront_url" {
-  description = "URL pública de la app"
+  description = "URL pública de la app (CloudFront)"
   value       = "https://${aws_cloudfront_distribution.frontend.domain_name}"
+}
+
+output "domain_url" {
+  description = "URL del dominio personalizado"
+  value       = "https://${var.domain_name}"
 }
 
 output "s3_bucket" {

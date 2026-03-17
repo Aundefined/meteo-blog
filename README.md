@@ -2,7 +2,7 @@
 
 Proyecto MLOps en producción que combina datos meteorológicos en tiempo real de la Agencia Estatal de Meteorología (AEMET) con resúmenes generados por Inteligencia Artificial mediante AWS Bedrock. Incluye un chatbot con memoria de conversación que responde tanto preguntas sobre la arquitectura del proyecto como consultas meteorológicas ("¿qué tiempo hará el miércoles en Madrid?"). Completamente serverless, automatizado y desplegado en AWS.
 
-**Demo en vivo:** https://dz2xr9ouy3oet.cloudfront.net
+**Demo en vivo:** https://meteoblog.net
 
 ---
 
@@ -75,6 +75,8 @@ Lambda Chatbot [Docker/ECR]
 | Amazon CloudFront | CDN con HTTPS, sirve toda la aplicación |
 | Amazon API Gateway (HTTP API) | Endpoint público para el chatbot |
 | Amazon EventBridge Scheduler | Dispara el fetcher 5 veces al día |
+| AWS Certificate Manager (ACM) | Certificado SSL para el dominio personalizado |
+| Amazon Route 53 | DNS y dominio personalizado (meteoblog.net) |
 | AWS IAM | Roles de mínimo privilegio para cada componente |
 
 ### DevOps
@@ -122,7 +124,8 @@ Todos los recursos AWS están definidos en Terraform y versionados en el reposit
 - `lambda.tf` — Lambda del fetcher
 - `chatbot.tf` — Lambda del chatbot, ECR, API Gateway HTTP API
 - `s3.tf` — bucket del frontend con acceso público bloqueado
-- `cloudfront.tf` — distribución con Origin Access Control, TTL diferenciado para `weather.json` (5 min) frente a assets estáticos (1h)
+- `cloudfront.tf` — distribución con Origin Access Control, TTL diferenciado para `weather.json` (5 min) frente a assets estáticos (1h), dominio personalizado con certificado ACM
+- `dns.tf` — certificado SSL en ACM (us-east-1), validación DNS automática, records A en Route 53 para apex y www
 - `eventbridge.tf` — scheduler con política de reintentos
 - `iam.tf` — roles de mínimo privilegio para fetcher, chatbot, EventBridge y GitHub Actions
 
@@ -236,6 +239,26 @@ python build_index.py
 - Terraform >= 1.10
 - Docker Desktop
 
+### Dominio personalizado (opcional)
+
+El proyecto soporta dominio personalizado gestionado íntegramente desde AWS. El proceso es:
+
+1. **Registrar el dominio en Route 53** (manual) — Route 53 → Registered domains → Register domain. AWS crea automáticamente la hosted zone.
+2. **Anotar el Hosted Zone ID** — Route 53 → Hosted zones → tu dominio → campo "Hosted zone ID"
+3. **Configurar las variables en Terraform:**
+   ```hcl
+   # terraform/variables.tf (o terraform.tfvars)
+   domain_name    = "tudominio.net"
+   hosted_zone_id = "Z0123456789ABCDEF"
+   ```
+4. **Ejecutar `terraform apply`** — Terraform se encarga del resto automáticamente:
+   - Crea el certificado SSL en ACM (`us-east-1`, obligatorio para CloudFront)
+   - Añade los CNAME de validación en Route 53 y espera a que ACM lo valide (~5-15 min)
+   - Configura CloudFront con el dominio y el certificado
+   - Crea los records A (apex y www) apuntando a CloudFront
+
+> **Nota:** ACM debe estar en `us-east-1` por restricción de CloudFront, independientemente de la región del resto de recursos. Por eso `main.tf` define un provider alias `aws.us_east_1`.
+
 ### Primer despliegue
 
 ```bash
@@ -281,7 +304,7 @@ Una vez configurados los secrets, cualquier push a `main` dispara el despliegue 
 
 ## Estimación de costes
 
-Ejecutar este proyecto en AWS cuesta aproximadamente **$0.10/mes** en pay-as-you-go:
+Ejecutar este proyecto en AWS cuesta aproximadamente **$0.60/mes** en pay-as-you-go:
 
 | Servicio | Coste |
 |---|---|
@@ -294,6 +317,7 @@ Ejecutar este proyecto en AWS cuesta aproximadamente **$0.10/mes** en pay-as-you
 | API Gateway HTTP API | $0.00/mes (uso mínimo, dentro del nivel gratuito) |
 | ECR | $0.05/mes (~1GB de imágenes) |
 | EventBridge Scheduler | $0.00/mes (dentro del nivel gratuito) |
+| Route 53 Hosted Zone | $0.50/mes |
 
 ---
 

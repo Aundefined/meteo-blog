@@ -25,3 +25,15 @@ provider "aws" {
     }
   }
 }
+
+# ACM para CloudFront requiere us-east-1 obligatoriamente
+provider "aws" {
+  alias  = "us_east_1"
+  region = "us-east-1"
+
+  default_tags {
+    tags = {
+      project = "meteo-blog"
+    }
+  }
+}
