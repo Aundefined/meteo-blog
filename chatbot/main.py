@@ -43,6 +43,34 @@ def load_index():
     print(f"Índice cargado: {_index.ntotal} vectores, {len(_chunks)} chunks")
 
 
+def load_weather() -> dict:
+    s3 = boto3.client("s3")
+    obj = s3.get_object(Bucket=S3_BUCKET, Key="weather.json")
+    return json.loads(obj["Body"].read())
+
+
+def classify_question(question: str) -> bool:
+    """Devuelve True si la pregunta es sobre meteorología/tiempo, False si es técnica."""
+    bedrock = boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
+    prompt = (
+        "¿Es esta pregunta sobre el tiempo meteorológico o la predicción del tiempo? "
+        "Responde únicamente 'si' o 'no'.\n\n"
+        f"Pregunta: {question}"
+    )
+    response = bedrock.invoke_model(
+        modelId=BEDROCK_MODEL_ID,
+        body=json.dumps({
+            "messages": [{"role": "user", "content": [{"text": prompt}]}],
+            "inferenceConfig": {"maxTokens": 5, "temperature": 0},
+        }),
+        contentType="application/json",
+        accept="application/json",
+    )
+    result = json.loads(response["body"].read())
+    answer = result["output"]["message"]["content"][0]["text"].strip().lower()
+    return answer.startswith("si") or answer.startswith("sí")
+
+
 def embed(text: str) -> np.ndarray:
     bedrock = boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
     response = bedrock.invoke_model(
@@ -95,6 +123,29 @@ def generate_answer(question: str, chunks: list[dict]) -> str:
     return result["output"]["message"]["content"][0]["text"].strip()
 
 
+def generate_weather_answer(question: str, weather: dict) -> str:
+    context = json.dumps(weather, ensure_ascii=False, indent=2)
+    prompt = (
+        "Eres Nuwe, un asistente meteorológico. Tienes los datos de predicción del tiempo "
+        "para las próximas comunidades autónomas de España.\n\n"
+        f"DATOS METEOROLÓGICOS:\n{context}\n\n"
+        f"PREGUNTA: {question}\n\n"
+        "Responde en español de forma clara y concisa usando únicamente los datos proporcionados."
+    )
+    bedrock = boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
+    response = bedrock.invoke_model(
+        modelId=BEDROCK_MODEL_ID,
+        body=json.dumps({
+            "messages": [{"role": "user", "content": [{"text": prompt}]}],
+            "inferenceConfig": {"maxTokens": 500, "temperature": 0.2},
+        }),
+        contentType="application/json",
+        accept="application/json",
+    )
+    result = json.loads(response["body"].read())
+    return result["output"]["message"]["content"][0]["text"].strip()
+
+
 def lambda_handler(event, context):
     # CORS preflight
     method = event.get("requestContext", {}).get("http", {}).get("method", "")
@@ -111,9 +162,15 @@ def lambda_handler(event, context):
                 "body": json.dumps({"error": "Falta el campo 'pregunta'"}),
             }
 
-        load_index()
-        chunks = search(embed(question))
-        answer = generate_answer(question, chunks)
+        es_meteo = classify_question(question)
+
+        if es_meteo:
+            weather = load_weather()
+            answer = generate_weather_answer(question, weather)
+        else:
+            load_index()
+            chunks = search(embed(question))
+            answer = generate_answer(question, chunks)
 
         return {
             "statusCode": 200,

@@ -1,7 +1,7 @@
 import json
 import os
 import time
-from datetime import datetime, timezone
+from datetime import datetime, date, timezone
 from zoneinfo import ZoneInfo
 
 TZ_MADRID = ZoneInfo("Europe/Madrid")
@@ -121,8 +121,15 @@ def obtener_prediccion_municipio(cod_municipio: str) -> list[dict] | None:
                 if cielo is None:
                     cielo = desc  # primera válida como fallback
 
+            fecha_str = dia.get("fecha", "")[:10]
+            try:
+                dia_semana = date.fromisoformat(fecha_str).strftime("%A").lower()
+            except ValueError:
+                dia_semana = ""
+
             result.append({
-                "fecha": dia.get("fecha", "")[:10],
+                "fecha": fecha_str,
+                "dia_semana": dia_semana,
                 "temp_max": temp_max,
                 "temp_min": temp_min,
                 "prob_lluvia": prob_lluvia,
