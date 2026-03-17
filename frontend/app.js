@@ -2,6 +2,8 @@ const WEATHER_URL = './weather.json';
 const MAP_URL = './spain.svg';
 const CHATBOT_URL = 'https://ezqbc96jig.execute-api.eu-west-1.amazonaws.com/';
 
+const SESSION_ID = crypto.randomUUID();
+
 // Mapeo de nombre de comunidad al ID del SVG
 const SVG_ID_MAP = {
   'Andalucía':             'andalusia',
@@ -324,10 +326,10 @@ load();
 // ---------------------------------------------------------------------------
 
 const SUGGESTIONS = [
+  '¿Qué tiempo hará mañana en Madrid?',
+  '¿Dónde lloverá esta semana?',
   '¿Cómo funciona la Lambda del fetcher?',
   '¿Qué modelo de IA usa y por qué?',
-  '¿Cómo está desplegada la infraestructura?',
-  '¿Qué es el pipeline de datos?',
   '¿Por qué no hay API Gateway en el fetcher?',
 ];
 
@@ -352,7 +354,7 @@ function setTyping(visible) {
 }
 
 function initChat() {
-  addMessage('Hola 👋 Soy Nuwe, un asistente que puede explicarte cómo está construido este proyecto. Pregúntame sobre la arquitectura, el código, las decisiones de diseño o las tecnologías usadas.', 'bot');
+  addMessage('Hola 👋 Soy Nuwe. Puedo contarte cómo está construido este proyecto o responderte preguntas sobre el tiempo en España. ¿En qué te puedo ayudar?', 'bot');
 
   const suggestionsEl = document.getElementById('chat-suggestions');
   SUGGESTIONS.forEach(s => {
@@ -382,7 +384,7 @@ async function sendMessage() {
     const res = await fetch(CHATBOT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pregunta: question }),
+      body: JSON.stringify({ pregunta: question, session_id: SESSION_ID }),
     });
     const data = await res.json();
     addMessage(data.respuesta || data.error, 'bot');

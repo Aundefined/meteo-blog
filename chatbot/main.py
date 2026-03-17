@@ -3,8 +3,6 @@ import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-TZ_MADRID = ZoneInfo("Europe/Madrid")
-
 import boto3
 import faiss
 import numpy as np
@@ -12,12 +10,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+TZ_MADRID = ZoneInfo("Europe/Madrid")
+
 S3_BUCKET = os.getenv("S3_BUCKET")
 BEDROCK_REGION = os.getenv("BEDROCK_REGION", "eu-west-1")
 BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "eu.amazon.nova-micro-v1:0")
 EMBED_MODEL_ID = "amazon.titan-embed-text-v2:0"
 EMBED_DIMENSIONS = 256
 TOP_K = 5
+MAX_HISTORY = 20  # últimos 20 mensajes (10 turnos)
 
 INDEX_PATH = "/tmp/index.faiss"
 CHUNKS_PATH = "/tmp/chunks.json"
@@ -53,26 +54,25 @@ def load_weather() -> dict:
     return json.loads(obj["Body"].read())
 
 
-def classify_question(question: str) -> bool:
-    """Devuelve True si la pregunta es sobre meteorología/tiempo, False si es técnica."""
-    bedrock = boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
-    prompt = (
-        "¿Es esta pregunta sobre el tiempo meteorológico o la predicción del tiempo? "
-        "Responde únicamente 'si' o 'no'.\n\n"
-        f"Pregunta: {question}"
+def load_conversation(session_id: str) -> list[dict]:
+    s3 = boto3.client("s3")
+    try:
+        obj = s3.get_object(Bucket=S3_BUCKET, Key=f"conversations/{session_id}.json")
+        return json.loads(obj["Body"].read())
+    except s3.exceptions.NoSuchKey:
+        return []
+    except Exception:
+        return []
+
+
+def save_conversation(session_id: str, conversation: list[dict]) -> None:
+    s3 = boto3.client("s3")
+    s3.put_object(
+        Bucket=S3_BUCKET,
+        Key=f"conversations/{session_id}.json",
+        Body=json.dumps(conversation, ensure_ascii=False, indent=2),
+        ContentType="application/json",
     )
-    response = bedrock.invoke_model(
-        modelId=BEDROCK_MODEL_ID,
-        body=json.dumps({
-            "messages": [{"role": "user", "content": [{"text": prompt}]}],
-            "inferenceConfig": {"maxTokens": 5, "temperature": 0},
-        }),
-        contentType="application/json",
-        accept="application/json",
-    )
-    result = json.loads(response["body"].read())
-    answer = result["output"]["message"]["content"][0]["text"].strip().lower()
-    return answer.startswith("si") or answer.startswith("sí")
 
 
 def embed(text: str) -> np.ndarray:
@@ -96,53 +96,46 @@ def search(vector: np.ndarray) -> list[dict]:
     ]
 
 
-def generate_answer(question: str, chunks: list[dict]) -> str:
-    context = "\n\n---\n\n".join(
+def generate_answer(question: str, history: list[dict], chunks: list[dict], weather: dict) -> str:
+    rag_context = "\n\n---\n\n".join(
         f"[{c['source']} — {c['section']}]\n{c['text']}"
         for c in chunks
     )
-    prompt = (
-        "Eres Nuwe, un asistente técnico que explica cómo está construido el proyecto meteo-blog, "
-        "una aplicación meteorológica serverless desplegada en AWS.\n\n"
-        "Tu objetivo es explicar decisiones de diseño, arquitectura y funcionamiento interno: "
-        "por qué se eligió cada tecnología, cómo interactúan los componentes, qué hace cada parte del código. "
-        "NO des instrucciones de instalación, despliegue ni comandos para ejecutar el proyecto.\n\n"
-        "Usa ÚNICAMENTE el siguiente contexto extraído del código y documentación "
-        "del proyecto para responder. Si la respuesta no está en el contexto, dilo claramente.\n\n"
-        f"CONTEXTO:\n{context}\n\n"
-        f"PREGUNTA: {question}\n\n"
-        "Responde en español de forma clara y concisa, orientado a explicar el diseño técnico."
-    )
-    bedrock = boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
-    response = bedrock.invoke_model(
-        modelId=BEDROCK_MODEL_ID,
-        body=json.dumps({
-            "messages": [{"role": "user", "content": [{"text": prompt}]}],
-            "inferenceConfig": {"maxTokens": 500, "temperature": 0.2},
-        }),
-        contentType="application/json",
-        accept="application/json",
-    )
-    result = json.loads(response["body"].read())
-    return result["output"]["message"]["content"][0]["text"].strip()
-
-
-def generate_weather_answer(question: str, weather: dict) -> str:
-    context = json.dumps(weather, ensure_ascii=False, indent=2)
+    weather_context = json.dumps(weather, ensure_ascii=False, indent=2)
     hoy = datetime.now(TZ_MADRID).strftime("%A %d de %B de %Y")
-    prompt = (
-        "Eres Nuwe, un asistente meteorológico. Tienes los datos de predicción del tiempo "
-        "para las próximas comunidades autónomas de España.\n\n"
+
+    system_prompt = (
+        "Eres Nuwe, un asistente del proyecto meteo-blog, una aplicación meteorológica serverless desplegada en AWS.\n\n"
+        "Puedes responder dos tipos de preguntas:\n"
+        "- Sobre la arquitectura y el código del proyecto: usa el CONTEXTO TÉCNICO.\n"
+        "- Sobre el tiempo meteorológico en España: usa los DATOS METEOROLÓGICOS.\n"
+        "Usa únicamente la fuente relevante para cada pregunta. "
+        "Si la respuesta no está en ninguna fuente, dilo claramente.\n\n"
         f"Hoy es {hoy}.\n\n"
-        f"DATOS METEOROLÓGICOS:\n{context}\n\n"
-        f"PREGUNTA: {question}\n\n"
-        "Responde en español de forma clara y concisa usando únicamente los datos proporcionados."
+        f"CONTEXTO TÉCNICO:\n{rag_context}\n\n"
+        f"DATOS METEOROLÓGICOS:\n{weather_context}"
     )
+
+    # El contexto va como primer par user/assistant para que el historial pueda seguir
+    messages = [
+        {"role": "user", "content": [{"text": system_prompt}]},
+        {"role": "assistant", "content": [{"text": "Entendido, estoy listo para responder."}]},
+    ]
+
+    # Historial reciente (últimos MAX_HISTORY mensajes)
+    for msg in history[-MAX_HISTORY:]:
+        messages.append({
+            "role": msg["role"],
+            "content": [{"text": msg["content"]}],
+        })
+
+    messages.append({"role": "user", "content": [{"text": question}]})
+
     bedrock = boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
     response = bedrock.invoke_model(
         modelId=BEDROCK_MODEL_ID,
         body=json.dumps({
-            "messages": [{"role": "user", "content": [{"text": prompt}]}],
+            "messages": messages,
             "inferenceConfig": {"maxTokens": 500, "temperature": 0.2},
         }),
         contentType="application/json",
@@ -161,22 +154,31 @@ def lambda_handler(event, context):
     try:
         body = json.loads(event.get("body") or "{}")
         question = body.get("pregunta", "").strip()
+        session_id = body.get("session_id", "").strip()
+
         if not question:
             return {
                 "statusCode": 400,
                 "headers": CORS_HEADERS,
                 "body": json.dumps({"error": "Falta el campo 'pregunta'"}),
             }
+        if not session_id:
+            return {
+                "statusCode": 400,
+                "headers": CORS_HEADERS,
+                "body": json.dumps({"error": "Falta el campo 'session_id'"}),
+            }
 
-        es_meteo = classify_question(question)
+        load_index()
+        chunks = search(embed(question))
+        weather = load_weather()
+        history = load_conversation(session_id)
 
-        if es_meteo:
-            weather = load_weather()
-            answer = generate_weather_answer(question, weather)
-        else:
-            load_index()
-            chunks = search(embed(question))
-            answer = generate_answer(question, chunks)
+        answer = generate_answer(question, history, chunks, weather)
+
+        history.append({"role": "user", "content": question, "timestamp": datetime.now(TZ_MADRID).isoformat()})
+        history.append({"role": "assistant", "content": answer, "timestamp": datetime.now(TZ_MADRID).isoformat()})
+        save_conversation(session_id, history)
 
         return {
             "statusCode": 200,
@@ -195,7 +197,7 @@ def lambda_handler(event, context):
 
 if __name__ == "__main__":
     # Prueba local
-    load_dotenv(f"../fetcher/.env")
-    event = {"requestContext": {"http": {"method": "POST"}}, "body": json.dumps({"pregunta": "¿Cómo funciona la Lambda del fetcher?"})}
+    load_dotenv("../fetcher/.env")
+    event = {"requestContext": {"http": {"method": "POST"}}, "body": json.dumps({"pregunta": "¿Cómo funciona la Lambda del fetcher?", "session_id": "test-session-local"})}
     result = lambda_handler(event, None)
     print(json.loads(result["body"])["respuesta"])

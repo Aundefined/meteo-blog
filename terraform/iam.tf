@@ -114,6 +114,11 @@ resource "aws_iam_role_policy" "chatbot_lambda" {
           "${aws_s3_bucket.frontend.arn}/weather.json",
         ]
       },
+      {
+        Effect   = "Allow"
+        Action   = ["s3:GetObject", "s3:PutObject"]
+        Resource = "${aws_s3_bucket.frontend.arn}/conversations/*"
+      },
     ]
   })
 }

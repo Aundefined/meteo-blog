@@ -1,6 +1,6 @@
 # Meteo Blog — Previsión del Tiempo en España en Tiempo Real 🌦️
 
-Proyecto MLOps en producción que combina datos meteorológicos en tiempo real de la Agencia Estatal de Meteorología (AEMET) con resúmenes generados por Inteligencia Artificial mediante AWS Bedrock. Incluye un chatbot RAG que responde preguntas sobre la arquitectura del propio proyecto. Completamente serverless, automatizado y desplegado en AWS.
+Proyecto MLOps en producción que combina datos meteorológicos en tiempo real de la Agencia Estatal de Meteorología (AEMET) con resúmenes generados por Inteligencia Artificial mediante AWS Bedrock. Incluye un chatbot con memoria de conversación que responde tanto preguntas sobre la arquitectura del proyecto como consultas meteorológicas ("¿qué tiempo hará el miércoles en Madrid?"). Completamente serverless, automatizado y desplegado en AWS.
 
 **Demo en vivo:** https://dz2xr9ouy3oet.cloudfront.net
 
@@ -41,13 +41,15 @@ API Gateway HTTP API
 Lambda Chatbot [Docker/ECR]
         │
         ├── S3 ──► carga índice FAISS + chunks del proyecto
+        ├── S3 ──► lee weather.json (datos meteorológicos en tiempo real)
+        ├── S3 ──► carga y guarda historial de conversación (conversations/{session_id}.json)
         ├── AWS Bedrock (Titan Embed v2) ──► embedding de la pregunta
         └── AWS Bedrock (Amazon Nova Micro) ──► respuesta en lenguaje natural
 ```
 
 **Decisión de diseño clave — fetcher:** no hay API Gateway ni servidor backend. La Lambda escribe un único archivo `weather.json` en S3 de forma programada, y el frontend lo lee directamente desde CloudFront. Esto elimina una capa completa de infraestructura, reduce el coste a casi cero y mejora la fiabilidad.
 
-**Decisión de diseño clave — chatbot:** el índice RAG (FAISS + chunks del repo) se genera una vez con un script local y se almacena en S3. La Lambda del chatbot lo carga en memoria en el cold start y lo cachea entre invocaciones. Sin base de datos vectorial gestionada, sin costes adicionales.
+**Decisión de diseño clave — chatbot:** el chatbot combina dos fuentes de conocimiento en un único prompt: el índice RAG (arquitectura del proyecto) y `weather.json` (predicción en tiempo real). El frontend genera un `session_id` por sesión y lo incluye en cada request; la Lambda persiste el historial de conversación en S3 (`conversations/{session_id}.json`) para mantener contexto entre turnos. Sin base de datos vectorial ni de sesiones gestionadas, sin costes adicionales.
 
 ---
 
@@ -98,7 +100,12 @@ Lambda Chatbot [Docker/ECR]
 ### Pipeline RAG (chatbot)
 
 1. **Indexación** (offline, script local): los ficheros del repositorio (código, Terraform, README, CI/CD) se trocean en chunks semánticos, se generan embeddings con **Titan Embed Text v2** (256 dimensiones) y se construye un índice **FAISS** que se sube a S3
-2. **Consulta** (en tiempo real): el usuario escribe una pregunta → la Lambda la embeds con Titan → busca los 5 chunks más relevantes en FAISS (similitud coseno) → construye un prompt con el contexto → llama a **Nova Micro** → devuelve la respuesta
+2. **Consulta** (en tiempo real):
+   - El frontend genera un `session_id` único por sesión (`crypto.randomUUID()`) y lo envía en cada request
+   - La Lambda embeds la pregunta con Titan, busca los 5 chunks más relevantes en FAISS y lee `weather.json` desde S3
+   - Carga el historial de la conversación desde `s3://bucket/conversations/{session_id}.json` (vacío en el primer turno)
+   - Construye un prompt con ambos contextos (RAG + datos meteorológicos), el historial reciente (últimos 20 mensajes) y la pregunta actual, e invoca **Nova Micro**
+   - Guarda el turno actualizado (pregunta + respuesta) de vuelta en S3
 
 ### Frontend
 
@@ -106,7 +113,7 @@ Aplicación de una sola página sin frameworks. Al cargar, `app.js` hace un `fet
 - Un resumen nacional generado por IA en la parte superior
 - Un mapa SVG de España coloreado por probabilidad de lluvia con emojis por comunidad
 - Cards meteorológicas por comunidad autónoma
-- Un chatbot para preguntar sobre la arquitectura del proyecto
+- Un chatbot con memoria de conversación para preguntar sobre la arquitectura del proyecto o sobre la predicción meteorológica
 
 ### Infraestructura como código
 
@@ -141,6 +148,8 @@ Los cambios de infraestructura (Terraform) se aplican manualmente tras revisar e
 **Inferencia ML serverless** — AWS Bedrock para LLM y embeddings significa cero gestión de modelos: sin instancias GPU, sin model serving, sin escalado manual.
 
 **Vector store minimalista** — FAISS almacenado en S3 y cargado en memoria en el cold start. Sin bases de datos vectoriales gestionadas (Pinecone, OpenSearch) para mantener el coste en $0.
+
+**Memoria de conversación serverless** — El historial de cada sesión se persiste como un JSON en S3 (`conversations/{session_id}.json`). Sin DynamoDB ni Redis: S3 actúa como store de estado ligero, con coste despreciable y sin infraestructura adicional que gestionar.
 
 **Infraestructura como código** — Todo el stack es reproducible desde código con `terraform apply`.
 
