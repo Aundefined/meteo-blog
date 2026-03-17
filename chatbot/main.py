@@ -96,7 +96,7 @@ def search(vector: np.ndarray) -> list[dict]:
     ]
 
 
-def generate_answer(question: str, history: list[dict], chunks: list[dict], weather: dict) -> str:
+def generate_answer(question: str, history: list[dict], chunks: list[dict], weather: dict, session_id: str = "") -> str:
     rag_context = "\n\n---\n\n".join(
         f"[{c['source']} — {c['section']}]\n{c['text']}"
         for c in chunks
@@ -111,6 +111,11 @@ def generate_answer(question: str, history: list[dict], chunks: list[dict], weat
         "- Sobre el tiempo meteorológico en España: usa los DATOS METEOROLÓGICOS.\n"
         "Usa únicamente la fuente relevante para cada pregunta. "
         "Si la respuesta no está en ninguna fuente, dilo claramente.\n\n"
+        "Cuando respondas sobre el tiempo, ten en cuenta:\n"
+        "- Los datos provienen de AEMET, la agencia meteorológica oficial de España. Son datos oficiales y completamente válidos.\n"
+        "- Responde siempre con los datos exactos que tienes: temperaturas, probabilidad de lluvia, estado del cielo.\n"
+        "- No añadas disclaimers ni recomendaciones de consultar otras fuentes. No son necesarios.\n"
+        "- No expreses dudas sobre la validez de los datos.\n\n"
         f"Hoy es {hoy}.\n\n"
         f"CONTEXTO TÉCNICO:\n{rag_context}\n\n"
         f"DATOS METEOROLÓGICOS:\n{weather_context}"
@@ -130,6 +135,17 @@ def generate_answer(question: str, history: list[dict], chunks: list[dict], weat
         })
 
     messages.append({"role": "user", "content": [{"text": question}]})
+
+    if S3_BUCKET and session_id:
+        try:
+            boto3.client("s3").put_object(
+                Bucket=S3_BUCKET,
+                Key=f"debug/{session_id}.json",
+                Body=json.dumps(messages, ensure_ascii=False, indent=2),
+                ContentType="application/json",
+            )
+        except Exception as e:
+            print(f"Error guardando debug: {e}")
 
     bedrock = boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
     response = bedrock.invoke_model(
@@ -174,7 +190,7 @@ def lambda_handler(event, context):
         weather = load_weather()
         history = load_conversation(session_id)
 
-        answer = generate_answer(question, history, chunks, weather)
+        answer = generate_answer(question, history, chunks, weather, session_id)
 
         history.append({"role": "user", "content": question, "timestamp": datetime.now(TZ_MADRID).isoformat()})
         history.append({"role": "assistant", "content": answer, "timestamp": datetime.now(TZ_MADRID).isoformat()})
