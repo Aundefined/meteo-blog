@@ -141,7 +141,7 @@ def generate_answer(question: str, history: list[dict], chunks: list[dict], weat
             boto3.client("s3").put_object(
                 Bucket=S3_BUCKET,
                 Key=f"debug/{session_id}.json",
-                Body=json.dumps(messages, ensure_ascii=False, indent=2),
+                Body=json.dumps(system_prompt, ensure_ascii=False, indent=2),
                 ContentType="application/json",
             )
         except Exception as e:
