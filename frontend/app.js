@@ -70,9 +70,65 @@ function rainColor(prob) {
   return 'text-slate-500';
 }
 
-function createCard(c) {
+function createMiniChart(dias, mode) {
+  const W = 200, H = 58, pX = 6, pY = 6, lblH = 13;
+  const n = dias.length;
+  if (n < 2) return '';
+
+  const DIAS_SHORT = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'];
+  const MESES_SHORT = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const chartH = H - lblH;
+  const xOf = i => pX + (i / (n - 1)) * (W - pX * 2);
+  const tipDate = d => {
+    const date = new Date(d.fecha + 'T12:00:00');
+    return `${DIAS_SHORT[date.getDay()]} ${date.getDate()} ${MESES_SHORT[date.getMonth()]}`;
+  };
+
+  if (mode === 'rain') {
+    const gapW = (W - pX * 2) / n;
+    const barW = gapW * 0.55;
+    const bars = dias.map((d, i) => {
+      const prob = d.prob_lluvia ?? 0;
+      const bH = Math.max(1, (prob / 100) * (chartH - pY));
+      const x = pX + i * gapW + (gapW - barW) / 2;
+      const y = chartH - bH;
+      return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${bH.toFixed(1)}" rx="2" fill="${getRainFill(prob)}"><title>${tipDate(d)} — ${prob}%</title></rect>`;
+    }).join('');
+    const lbls = dias.map((d, i) => {
+      const x = pX + i * gapW + gapW / 2;
+      const day = new Date(d.fecha + 'T12:00:00').getDay();
+      return `<text x="${x.toFixed(1)}" y="${H - 1}" text-anchor="middle" font-size="9" fill="#94a3b8">${DIAS_SHORT[day]}</text>`;
+    }).join('');
+    return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}">${bars}${lbls}</svg>`;
+  }
+
+  const temps = dias.flatMap(d => [d.temp_max, d.temp_min]).filter(t => t !== null);
+  if (!temps.length) return '';
+  const lo = Math.min(...temps) - 1, hi = Math.max(...temps) + 1;
+  const yOf = t => pY + ((hi - t) / (hi - lo)) * (chartH - pY * 2);
+  const pts = key => dias.map((d, i) => d[key] !== null ? [xOf(i), yOf(d[key]), d] : null).filter(Boolean);
+  const maxPts = pts('temp_max');
+  const minPts = pts('temp_min');
+  const toLine = pts => pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+  const areaPts = [...maxPts, ...[...minPts].reverse()].map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+  const lbls = dias.map((d, i) => {
+    const day = new Date(d.fecha + 'T12:00:00').getDay();
+    return `<text x="${xOf(i).toFixed(1)}" y="${H - 1}" text-anchor="middle" font-size="9" fill="#94a3b8">${DIAS_SHORT[day]}</text>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}">
+    <polygon points="${areaPts}" fill="#fff7ed" opacity="0.7"/>
+    <polyline points="${toLine(maxPts)}" fill="none" stroke="#f97316" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <polyline points="${toLine(minPts)}" fill="none" stroke="#93c5fd" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+    ${maxPts.map(p => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.5" fill="#f97316" pointer-events="none"/><circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="20" fill="transparent"><title>${tipDate(p[2])} — Max: ${p[2].temp_max}°</title></circle>`).join('')}
+    ${minPts.map(p => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.5" fill="#93c5fd" pointer-events="none"/><circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="20" fill="transparent"><title>${tipDate(p[2])} — Min: ${p[2].temp_min}°</title></circle>`).join('')}
+    ${lbls}
+  </svg>`;
+}
+
+function createCard(c, mode) {
   const emoji = getEmoji(c.cielo);
   const hasData = c.temp_max !== null;
+  const chart = c.dias && c.dias.length > 1 ? createMiniChart(c.dias, mode) : '';
 
   return `
     <div class="bg-white rounded-2xl shadow p-5 flex flex-col gap-3">
@@ -96,6 +152,7 @@ function createCard(c) {
       ` : `
         <p class="text-sm text-slate-400">Sin datos disponibles</p>
       `}
+      ${chart ? `<div class="border-t border-slate-100 pt-2">${chart}</div>` : ''}
     </div>
   `;
 }
@@ -149,7 +206,7 @@ function sortComunidades(comunidades, mode) {
 
 function renderCards() {
   const mode = document.querySelector('input[name="map-mode"]:checked')?.value || 'temp';
-  document.getElementById('cards-grid').innerHTML = sortComunidades(mapComunidades, mode).map(createCard).join('');
+  document.getElementById('cards-grid').innerHTML = sortComunidades(mapComunidades, mode).map(c => createCard(c, mode)).join('');
   const magnitud = mode === 'rain' ? 'probabilidad de lluvia' : 'temperatura';
   const direccion = sortAsc ? 'de menor a mayor' : 'de mayor a menor';
   document.getElementById('sort-label').textContent = `${magnitud} ${direccion}`;
@@ -166,6 +223,7 @@ function getComunidadesForDay(dayIndex) {
       temp_min: dia ? dia.temp_min : null,
       prob_lluvia: dia ? dia.prob_lluvia : null,
       cielo: dia ? dia.cielo : 'Sin datos',
+      dias: c.dias || [],
     };
   });
 }
