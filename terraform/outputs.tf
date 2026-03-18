@@ -32,3 +32,8 @@ output "chatbot_api_url" {
   description = "URL del API Gateway del chatbot"
   value       = aws_apigatewayv2_stage.chatbot.invoke_url
 }
+
+output "cloudwatch_dashboard_url" {
+  description = "URL del dashboard de CloudWatch"
+  value       = "https://${var.aws_region}.console.aws.amazon.com/cloudwatch/home?region=${var.aws_region}#dashboards:name=${aws_cloudwatch_dashboard.meteo_blog.dashboard_name}"
+}

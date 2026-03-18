@@ -77,6 +77,7 @@ Lambda Chatbot [Docker/ECR]
 | Amazon EventBridge Scheduler | Dispara el fetcher 5 veces al día |
 | AWS Certificate Manager (ACM) | Certificado SSL para el dominio personalizado |
 | Amazon Route 53 | DNS y dominio personalizado (meteoblog.net) |
+| Amazon CloudWatch | Dashboard de observabilidad con métricas de las Lambdas |
 | AWS IAM | Roles de mínimo privilegio para cada componente |
 
 ### DevOps
@@ -113,8 +114,8 @@ Lambda Chatbot [Docker/ECR]
 
 Aplicación de una sola página sin frameworks. Al cargar, `app.js` hace un `fetch` a `/weather.json` desde CloudFront y renderiza:
 - Un resumen nacional generado por IA en la parte superior
-- Un mapa SVG de España coloreado por probabilidad de lluvia con emojis por comunidad
-- Cards meteorológicas por comunidad autónoma
+- Un mapa SVG de España coloreado por temperatura o probabilidad de lluvia con emojis por comunidad
+- Cards meteorológicas por comunidad autónoma con gráfico sparkline de evolución a 5 días
 - Un chatbot con memoria de conversación para preguntar sobre la arquitectura del proyecto o sobre la predicción meteorológica
 
 ### Infraestructura como código
@@ -160,7 +161,7 @@ Los cambios de infraestructura (Terraform) se aplican manualmente tras revisar e
 
 **CI/CD sin credenciales** — GitHub Actions se autentica en AWS mediante federación OIDC. El rol IAM tiene permisos mínimos acotados por componente.
 
-**Observabilidad** — Logs de ejecución de cada Lambda en CloudWatch con retención de 14 días.
+**Observabilidad** — Logs de ejecución de cada Lambda en CloudWatch con retención de 14 días. Dashboard de métricas en tiempo real con invocaciones, duración (media y máximo) y errores para ambas Lambdas, definido como código en Terraform.
 
 ---
 
@@ -191,6 +192,7 @@ meteo-blog/
 │   ├── chatbot.tf           # Lambda chatbot + API Gateway + ECR
 │   ├── eventbridge.tf
 │   ├── iam.tf
+│   ├── cloudwatch.tf        # Dashboard de observabilidad
 │   └── outputs.tf
 └── .github/
     └── workflows/
