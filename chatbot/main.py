@@ -102,7 +102,11 @@ def generate_answer(question: str, history: list[dict], chunks: list[dict], weat
         for c in chunks
     )
     weather_context = json.dumps(weather, ensure_ascii=False, indent=2)
-    hoy = datetime.now(TZ_MADRID).strftime("%A %d de %B de %Y")
+    _DIAS = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']
+    _MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+              'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+    _ahora = datetime.now(TZ_MADRID)
+    hoy = f"{_DIAS[_ahora.weekday()]} {_ahora.day} de {_MESES[_ahora.month - 1]} de {_ahora.year}"
 
     system_prompt = (
         "Eres Nuwe, un asistente del proyecto meteo-blog, una aplicación meteorológica serverless desplegada en AWS.\n\n"
@@ -121,11 +125,7 @@ def generate_answer(question: str, history: list[dict], chunks: list[dict], weat
         f"DATOS METEOROLÓGICOS:\n{weather_context}"
     )
 
-    # El contexto va como primer par user/assistant para que el historial pueda seguir
-    messages = [
-        {"role": "user", "content": [{"text": system_prompt}]},
-        {"role": "assistant", "content": [{"text": "Entendido, estoy listo para responder."}]},
-    ]
+    messages = []
 
     # Historial reciente (últimos MAX_HISTORY mensajes)
     for msg in history[-MAX_HISTORY:]:
@@ -151,6 +151,7 @@ def generate_answer(question: str, history: list[dict], chunks: list[dict], weat
     response = bedrock.invoke_model(
         modelId=BEDROCK_MODEL_ID,
         body=json.dumps({
+            "system": [{"text": system_prompt}],
             "messages": messages,
             "inferenceConfig": {"maxTokens": 500, "temperature": 0.2},
         }),

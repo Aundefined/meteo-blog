@@ -1,7 +1,7 @@
 import json
 import os
 import time
-from datetime import datetime, date, timezone
+from datetime import datetime, date, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 TZ_MADRID = ZoneInfo("Europe/Madrid")
@@ -153,12 +153,18 @@ def generar_resumen_bedrock(comunidades: list[dict], manana: bool = False) -> st
         if c["temp_max"] is not None
     )
 
-    referencia = "mañana" if manana else "hoy"
+    _DIAS = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']
+    _MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+              'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+    fecha = (datetime.now(TZ_MADRID) + (timedelta(days=1) if manana else timedelta())).date()
+    fecha_str = f"{_DIAS[fecha.weekday()]} {fecha.day} de {_MESES[fecha.month - 1]}"
+    referencia = f"mañana {fecha_str}" if manana else f"hoy {fecha_str}"
     prompt = (
         f"Eres un meteorólogo español. Estos son los datos meteorológicos de {referencia} "
         "para las capitales de cada comunidad autónoma de España:\n\n"
         f"{lineas}\n\n"
-        f"Escribe un resumen general del tiempo en España {referencia} en 3-4 frases en español. "
+        f"Escribe un resumen general del tiempo en España en 3-4 frases en español. "
+        f"Comienza la primera frase con '{referencia.capitalize()}' (incluyendo el día y la fecha). "
         "Sé conciso y destaca cualquier anomalía regional importante (por ejemplo, si llueve "
         "en una zona mientras el resto está despejado, o temperaturas extremas en alguna región). "
         "Responde ÚNICAMENTE con el resumen, sin título ni introducción."

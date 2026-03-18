@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-03-18T10:23:54+0100",
-  "summary": "Hoy en España predomina el buen tiempo con cielos despejados o poco nubosos en la mayoría de regiones, aunque con probabilidades de lluvia en algunas zonas como Cataluña y Extremadura. Las temperaturas son templadas, con mínimas frescas en regiones del norte y centro. Canarias destaca por su nubosidad y lluvia constante, mientras que Andalucía y Extremadura experimentan condiciones más húmedas y nubladas.",
+  "updated_at": "2026-03-18T14:49:30+0100",
+  "summary": "Hoy miércoles 18 de marzo, gran parte de España disfruta de un día soleado y seco, aunque algunas regiones experimentan nubosidad y probabilidad de lluvia, especialmente en Andalucía, Cataluña y Extremadura. Canarias se enfrenta a un día completamente nublado con lluvia asegurada, mientras que las temperaturas permanecen templadas en la mayoría de las regiones, con notables contrastes en las mínimas, especialmente en Castilla y León.",
   "comunidades": [
     {
       "nombre": "Andalucía",
@@ -18,7 +18,7 @@
           "fecha": "2026-03-19",
           "dia_semana": "thursday",
           "temp_max": 25,
-          "temp_min": 11,
+          "temp_min": 13,
           "prob_lluvia": 80,
           "cielo": "Intervalos nubosos con lluvia escasa"
         },
@@ -156,16 +156,16 @@
           "fecha": "2026-03-19",
           "dia_semana": "thursday",
           "temp_max": 18,
-          "temp_min": 9,
-          "prob_lluvia": 35,
-          "cielo": "Intervalos nubosos"
+          "temp_min": 10,
+          "prob_lluvia": 55,
+          "cielo": "Intervalos nubosos con lluvia escasa"
         },
         {
           "fecha": "2026-03-20",
           "dia_semana": "friday",
-          "temp_max": 18,
+          "temp_max": 19,
           "temp_min": 8,
-          "prob_lluvia": 10,
+          "prob_lluvia": 25,
           "cielo": "Muy nuboso"
         },
         {
@@ -193,16 +193,16 @@
         {
           "fecha": "2026-03-18",
           "dia_semana": "wednesday",
-          "temp_max": 22,
-          "temp_min": 16,
+          "temp_max": 21,
+          "temp_min": 17,
           "prob_lluvia": 100,
           "cielo": "Nuboso con lluvia"
         },
         {
           "fecha": "2026-03-19",
           "dia_semana": "thursday",
-          "temp_max": 22,
-          "temp_min": 16,
+          "temp_max": 20,
+          "temp_min": 17,
           "prob_lluvia": 100,
           "cielo": "Cubierto con lluvia"
         },
@@ -288,12 +288,12 @@
           "temp_max": 20,
           "temp_min": 4,
           "prob_lluvia": 0,
-          "cielo": "Nubes altas"
+          "cielo": "Muy nuboso"
         },
         {
           "fecha": "2026-03-19",
           "dia_semana": "thursday",
-          "temp_max": 20,
+          "temp_max": 21,
           "temp_min": 4,
           "prob_lluvia": 0,
           "cielo": "Despejado"
@@ -303,7 +303,7 @@
           "dia_semana": "friday",
           "temp_max": 17,
           "temp_min": 5,
-          "prob_lluvia": 30,
+          "prob_lluvia": 45,
           "cielo": "Muy nuboso"
         },
         {
@@ -331,8 +331,8 @@
         {
           "fecha": "2026-03-18",
           "dia_semana": "wednesday",
-          "temp_max": 21,
-          "temp_min": 3,
+          "temp_max": 20,
+          "temp_min": 6,
           "prob_lluvia": 0,
           "cielo": "Poco nuboso"
         },
@@ -340,7 +340,7 @@
           "fecha": "2026-03-19",
           "dia_semana": "thursday",
           "temp_max": 20,
-          "temp_min": 6,
+          "temp_min": 7,
           "prob_lluvia": 0,
           "cielo": "Despejado"
         },
@@ -386,7 +386,7 @@
           "fecha": "2026-03-19",
           "dia_semana": "thursday",
           "temp_max": 16,
-          "temp_min": 10,
+          "temp_min": 11,
           "prob_lluvia": 30,
           "cielo": "Poco nuboso"
         },
@@ -515,8 +515,8 @@
         {
           "fecha": "2026-03-18",
           "dia_semana": "wednesday",
-          "temp_max": 19,
-          "temp_min": 8,
+          "temp_max": 20,
+          "temp_min": 7,
           "prob_lluvia": 0,
           "cielo": "Nubes altas"
         },
@@ -524,7 +524,7 @@
           "fecha": "2026-03-19",
           "dia_semana": "thursday",
           "temp_max": 19,
-          "temp_min": 9,
+          "temp_min": 7,
           "prob_lluvia": 0,
           "cielo": "Despejado"
         },
@@ -570,8 +570,8 @@
           "fecha": "2026-03-19",
           "dia_semana": "thursday",
           "temp_max": 19,
-          "temp_min": 7,
-          "prob_lluvia": 15,
+          "temp_min": 8,
+          "prob_lluvia": 5,
           "cielo": "Poco nuboso"
         },
         {
@@ -579,7 +579,7 @@
           "dia_semana": "friday",
           "temp_max": 16,
           "temp_min": 11,
-          "prob_lluvia": 85,
+          "prob_lluvia": 95,
           "cielo": "Cubierto"
         },
         {
@@ -617,7 +617,7 @@
           "dia_semana": "thursday",
           "temp_max": 15,
           "temp_min": 6,
-          "prob_lluvia": 5,
+          "prob_lluvia": 10,
           "cielo": "Nuboso"
         },
         {
@@ -661,7 +661,7 @@
         {
           "fecha": "2026-03-19",
           "dia_semana": "thursday",
-          "temp_max": 17,
+          "temp_max": 16,
           "temp_min": 8,
           "prob_lluvia": 65,
           "cielo": "Nuboso"
@@ -709,7 +709,7 @@
           "dia_semana": "thursday",
           "temp_max": 16,
           "temp_min": 7,
-          "prob_lluvia": 0,
+          "prob_lluvia": 5,
           "cielo": "Despejado"
         },
         {
@@ -717,7 +717,7 @@
           "dia_semana": "friday",
           "temp_max": 16,
           "temp_min": 6,
-          "prob_lluvia": 0,
+          "prob_lluvia": 5,
           "cielo": "Muy nuboso"
         },
         {
@@ -754,7 +754,7 @@
           "fecha": "2026-03-19",
           "dia_semana": "thursday",
           "temp_max": 17,
-          "temp_min": 11,
+          "temp_min": 12,
           "prob_lluvia": 95,
           "cielo": "Intervalos nubosos"
         },
@@ -763,8 +763,8 @@
           "dia_semana": "friday",
           "temp_max": 16,
           "temp_min": 12,
-          "prob_lluvia": 65,
-          "cielo": "Muy nuboso con lluvia escasa"
+          "prob_lluvia": 75,
+          "cielo": "Muy nuboso con lluvia"
         },
         {
           "fecha": "2026-03-21",
