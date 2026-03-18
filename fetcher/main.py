@@ -15,7 +15,7 @@ load_dotenv()
 AEMET_API_KEY = os.getenv("AEMET_API_KEY")
 S3_BUCKET = os.getenv("S3_BUCKET")
 CLOUDFRONT_DISTRIBUTION_ID = os.getenv("CLOUDFRONT_DISTRIBUTION_ID")
-BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "eu.amazon.nova-micro-v1:0")
+BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "eu.amazon.nova-lite-v1:0")
 BEDROCK_REGION = os.getenv("BEDROCK_REGION", "eu-west-1")
 AWS_REGION = os.getenv("AWS_DEFAULT_REGION", "eu-west-1")
 

@@ -1,6 +1,6 @@
 # Meteo Blog — Previsión del Tiempo en España en Tiempo Real 🌦️
 
-Proyecto MLOps en producción que combina datos meteorológicos en tiempo real de la Agencia Estatal de Meteorología (AEMET) con resúmenes generados por Inteligencia Artificial mediante AWS Bedrock. Incluye un chatbot con memoria de conversación que responde tanto preguntas sobre la arquitectura del proyecto como consultas meteorológicas ("¿qué tiempo hará el miércoles en Madrid?"). Completamente serverless, automatizado y desplegado en AWS.
+Proyecto MLOps en producción que combina datos meteorológicos en tiempo real de la Agencia Estatal de Meteorología (AEMET) con resúmenes generados por Inteligencia Artificial mediante AWS Bedrock. Incluye un chatbot con memoria de conversación que responde tanto preguntas sobre la arquitectura del proyecto como consultas meteorológicas. Completamente serverless, automatizado y desplegado en AWS.
 
 **Demo en vivo:** https://meteoblog.net
 
@@ -24,7 +24,7 @@ Lambda Fetcher [Docker/ECR]
         │
         ├── AEMET OpenData API ──► datos meteorológicos de las 17 CC.AA.
         │
-        ├── AWS Bedrock (Amazon Nova Micro) ──► resumen generado por IA
+        ├── AWS Bedrock (Amazon Nova Lite) ──► resumen generado por IA
         │
         └── S3 ──► escribe weather.json + invalidación caché CloudFront
 
@@ -44,7 +44,7 @@ Lambda Chatbot [Docker/ECR]
         ├── S3 ──► lee weather.json (datos meteorológicos en tiempo real)
         ├── S3 ──► carga y guarda historial de conversación (conversations/{session_id}.json)
         ├── AWS Bedrock (Titan Embed v2) ──► embedding de la pregunta
-        └── AWS Bedrock (Amazon Nova Micro) ──► respuesta en lenguaje natural
+        └── AWS Bedrock (Amazon Nova Lite) ──► respuesta en lenguaje natural
 ```
 
 **Decisión de diseño clave — fetcher:** no hay API Gateway ni servidor backend. La Lambda escribe un único archivo `weather.json` en S3 de forma programada, y el frontend lo lee directamente desde CloudFront. Esto elimina una capa completa de infraestructura, reduce el coste a casi cero y mejora la fiabilidad.
@@ -59,7 +59,7 @@ Lambda Chatbot [Docker/ECR]
 | Componente | Tecnología |
 |---|---|
 | Fuente de datos | [AEMET OpenData API](https://opendata.aemet.es/) |
-| IA / LLM | AWS Bedrock — Amazon Nova Micro |
+| IA / LLM | AWS Bedrock — Amazon Nova Lite |
 | Embeddings RAG | AWS Bedrock — Amazon Titan Embed Text v2 |
 | Vector store | FAISS (IndexFlatIP, 256 dimensiones) |
 | Backend | Python 3.12 |
@@ -96,7 +96,7 @@ Lambda Chatbot [Docker/ECR]
 1. **EventBridge** dispara la Lambda según un cron (`cron(0 0,6,10,14,18 * * ? *)` — 5 veces al día en hora española)
 2. La Lambda llama a la **API de AEMET OpenData** para cada una de las 17 comunidades autónomas:
    - `GET /prediccion/especifica/municipio/diaria/{municipio}` → temperatura máx/mín, probabilidad de lluvia y estado del cielo para la capital de cada comunidad
-3. Los datos estructurados se formatean en un prompt y se envían a **AWS Bedrock** (Amazon Nova Micro) para generar un resumen nacional de 3-4 frases en español
+3. Los datos estructurados se formatean en un prompt y se envían a **AWS Bedrock** (Amazon Nova Lite) para generar un resumen nacional de 3-4 frases en español
 4. La Lambda escribe el `weather.json` resultante en **S3** y crea una **invalidación de caché en CloudFront**
 
 ### Pipeline RAG (chatbot)
@@ -106,7 +106,7 @@ Lambda Chatbot [Docker/ECR]
    - El frontend genera un `session_id` único por sesión (`crypto.randomUUID()`) y lo envía en cada request
    - La Lambda embeds la pregunta con Titan, busca los 5 chunks más relevantes en FAISS y lee `weather.json` desde S3
    - Carga el historial de la conversación desde `s3://bucket/conversations/{session_id}.json` (vacío en el primer turno)
-   - Construye un prompt con ambos contextos (RAG + datos meteorológicos), el historial reciente (últimos 20 mensajes) y la pregunta actual, e invoca **Nova Micro**
+   - Construye un prompt con ambos contextos (RAG + datos meteorológicos), el historial reciente (últimos 20 mensajes) y la pregunta actual, e invoca **Nova Lite**
    - Guarda el turno actualizado (pregunta + respuesta) de vuelta en S3
 
 ### Frontend
@@ -173,7 +173,7 @@ meteo-blog/
 │   ├── requirements.txt
 │   └── Dockerfile
 ├── chatbot/
-│   ├── main.py              # Lambda: RAG con FAISS + Titan Embed + Nova Micro
+│   ├── main.py              # Lambda: RAG con FAISS + Titan Embed + Nova Lite
 │   ├── requirements.txt
 │   └── Dockerfile
 ├── indexer/
@@ -304,18 +304,18 @@ Una vez configurados los secrets, cualquier push a `main` dispara el despliegue 
 
 ## Estimación de costes
 
-Ejecutar este proyecto en AWS cuesta aproximadamente **$0.60/mes** en pay-as-you-go:
+Ejecutar este proyecto en AWS cuesta aproximadamente **$0.70/mes** en pay-as-you-go:
 
 | Servicio | Coste |
 |---|---|
-| Lambda fetcher | $0.02/mes (150 invocaciones/mes × 35s × 256MB) |
-| Lambda chatbot | ~$0.01/mes (uso esporádico) |
-| Bedrock (Nova Micro) | ~$0.01/mes (150 llamadas fetcher + consultas chatbot) |
+| Lambda fetcher | $0.07/mes (150 invocaciones/mes × 108s × 256MB) |
+| Lambda chatbot | ~$0.00/mes (uso esporádico) |
+| Bedrock (Nova Lite) | ~$0.04/mes (150 llamadas fetcher + consultas chatbot) |
 | Bedrock (Titan Embed) | ~$0.00/mes (indexación puntual, coste despreciable) |
 | S3 | $0.00/mes (almacenamiento y peticiones mínimos) |
 | CloudFront | $0.01/mes (0.1GB transferencia + solicitudes HTTPS) |
-| API Gateway HTTP API | $0.00/mes (uso mínimo, dentro del nivel gratuito) |
-| ECR | $0.05/mes (~1GB de imágenes) |
+| API Gateway HTTP API | $0.00/mes (uso mínimo) |
+| ECR | $0.05/mes (0.05GB de imágenes) |
 | EventBridge Scheduler | $0.00/mes (dentro del nivel gratuito) |
 | Route 53 Hosted Zone | $0.50/mes |
 

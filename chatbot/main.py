@@ -14,7 +14,7 @@ TZ_MADRID = ZoneInfo("Europe/Madrid")
 
 S3_BUCKET = os.getenv("S3_BUCKET")
 BEDROCK_REGION = os.getenv("BEDROCK_REGION", "eu-west-1")
-BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "eu.amazon.nova-micro-v1:0")
+BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "eu.amazon.nova-lite-v1:0")
 EMBED_MODEL_ID = "amazon.titan-embed-text-v2:0"
 EMBED_DIMENSIONS = 256
 TOP_K = 5

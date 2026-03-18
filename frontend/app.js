@@ -102,10 +102,16 @@ function createCard(c) {
 
 function getRainFill(prob) {
   if (prob === null || prob === undefined) return '#e2e8f0';
-  if (prob >= 75) return '#1d4ed8';
+  if (prob >= 90) return '#1e3a8a';
+  if (prob >= 80) return '#1e40af';
+  if (prob >= 70) return '#1d4ed8';
+  if (prob >= 60) return '#2563eb';
   if (prob >= 50) return '#3b82f6';
-  if (prob >= 25) return '#93c5fd';
-  return '#dbeafe';
+  if (prob >= 40) return '#60a5fa';
+  if (prob >= 30) return '#93c5fd';
+  if (prob >= 20) return '#bae6fd';
+  if (prob >= 10) return '#e0f2fe';
+  return '#f0f9ff';
 }
 
 function getTempFill(temp) {

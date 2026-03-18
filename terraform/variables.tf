@@ -24,7 +24,7 @@ variable "aemet_api_key" {
 variable "bedrock_model_id" {
   description = "ID del modelo Bedrock"
   type        = string
-  default     = "eu.amazon.nova-micro-v1:0"
+  default     = "eu.amazon.nova-lite-v1:0"
 }
 
 variable "github_repo" {
