@@ -109,7 +109,7 @@ def generate_answer(question: str, history: list[dict], chunks: list[dict], weat
     hoy = f"{_DIAS[_ahora.weekday()]} {_ahora.day} de {_MESES[_ahora.month - 1]} de {_ahora.year}"
 
     system_prompt = (
-        "Eres Nuwe, un asistente del proyecto meteo-blog, una aplicación meteorológica serverless desplegada en AWS.\n\n"
+        "Tu nombre es Nuwe. Eres un asistente del proyecto meteo-blog, una aplicación meteorológica serverless desplegada en AWS.\n\n"
         "Puedes responder dos tipos de preguntas:\n"
         "- Sobre la arquitectura y el código del proyecto: usa el CONTEXTO TÉCNICO.\n"
         "- Sobre el tiempo meteorológico en España: usa los DATOS METEOROLÓGICOS.\n"
