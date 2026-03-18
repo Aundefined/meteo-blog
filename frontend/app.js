@@ -362,10 +362,8 @@ document.getElementById('sort-toggle').addEventListener('click', () => {
 
 const SUGGESTIONS = [
   '¿Qué tiempo hará mañana en Madrid?',
-  '¿Dónde lloverá esta semana?',
   '¿Cómo funciona la Lambda del fetcher?',
-  '¿Qué modelo de IA usa y por qué?',
-  '¿Por qué no hay API Gateway en el fetcher?',
+  '¿Qué modelo de IA usa y por qué?'
 ];
 
 function addMessage(text, role) {
