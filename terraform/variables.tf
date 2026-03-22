@@ -41,7 +41,7 @@ variable "chatbot_image_uri" {
 variable "fetch_schedule" {
   description = "Expresión cron para EventBridge (hora España)"
   type        = string
-  default     = "cron(0 2,6,10,14,18 * * ? *)"
+  default     = "cron(0 0,6,10,14,18 * * ? *)"
 }
 
 variable "domain_name" {
