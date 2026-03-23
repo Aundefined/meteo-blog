@@ -147,7 +147,7 @@ def generar_resumen_bedrock(comunidades: list[dict], manana: bool = False) -> st
 
     lineas = "\n".join(
         f"- {c['nombre']} ({c['capital']}): "
-        f"máx {c['temp_max']}°C, mín {c['temp_min']}°C, "
+        f"temperatura {c['temp_max']}°C, "
         f"prob. lluvia {c['prob_lluvia']}%, cielo: {c['cielo']}"
         for c in comunidades
         if c["temp_max"] is not None
@@ -244,7 +244,6 @@ def ejecutar() -> dict:
             "nombre": c["nombre"],
             "capital": c["capital"],
             "temp_max": c["dias"][idx]["temp_max"] if len(c["dias"]) > idx else None,
-            "temp_min": c["dias"][idx]["temp_min"] if len(c["dias"]) > idx else None,
             "prob_lluvia": c["dias"][idx]["prob_lluvia"] if len(c["dias"]) > idx else None,
             "cielo": c["dias"][idx]["cielo"] if len(c["dias"]) > idx else "Sin datos",
         }
