@@ -242,10 +242,14 @@ def ejecutar() -> dict:
 
         dias = obtener_prediccion_municipio(ccaa["cod_municipio"])
 
+        if dias is None:
+            print(f"Fetch abortado: {ccaa['nombre']} sin datos tras todos los reintentos. weather.json NO actualizado.")
+            return {"abortado": True, "motivo": ccaa["nombre"]}
+
         comunidades_resultado.append({
             "nombre": ccaa["nombre"],
             "capital": ccaa["capital"],
-            "dias": dias if dias else [],
+            "dias": dias,
         })
 
         time.sleep(4)  # Respetar rate limit de AEMET
@@ -288,6 +292,8 @@ def ejecutar() -> dict:
 
 def lambda_handler(event, context):
     resultado = ejecutar()
+    if resultado.get("abortado"):
+        return {"statusCode": 200, "body": f"Abortado: {resultado['motivo']} sin datos - weather.json sin cambios"}
     return {"statusCode": 200, "body": f"OK - {len(resultado['comunidades'])} comunidades procesadas"}
 
 
