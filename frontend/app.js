@@ -262,7 +262,7 @@ function updateDayView(dayIndex) {
 
 function initDaySelector() {
   const firstCcaa = weatherData.comunidades[0];
-  const numDays = firstCcaa.dias ? Math.min(firstCcaa.dias.length, 5) : 1;
+  const numDays = firstCcaa.dias ? Math.min(firstCcaa.dias.length, 5) : 5;
   const container = document.getElementById('day-selector');
   container.innerHTML = '';
 
