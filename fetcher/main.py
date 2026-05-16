@@ -42,7 +42,7 @@ COMUNIDADES = [
 ]
 
 
-def aemet_get(path: str, max_retries: int = 3):
+def aemet_get(path: str, max_retries: int = 6):
     """
     Llama a AEMET en dos pasos:
     1. GET /opendata/api/{path} → JSON con campo 'datos' (URL)
